@@ -95,14 +95,24 @@ export function createRateLimiters(config) {
     skipSuccessfulRequests: true,
   });
 
+  const userOrIpKey = (req) =>
+    req.session?.userId ? `user:${req.session.userId}` : `ip:${ipKeyGenerator(req.ip)}`;
+
   const aiLimiter = rateLimit({
     ...base,
     windowMs: config.rateLimits.aiWindowMs,
     limit: config.rateLimits.aiMax,
-    keyGenerator: (req) =>
-      req.session?.userId ? `user:${req.session.userId}` : `ip:${ipKeyGenerator(req.ip)}`,
+    keyGenerator: userOrIpKey,
     validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
   });
 
-  return { globalLimiter, authLimiter, aiLimiter };
+  const fileLimiter = rateLimit({
+    ...base,
+    windowMs: config.rateLimits.fileWindowMs,
+    limit: config.rateLimits.fileMax,
+    keyGenerator: userOrIpKey,
+    validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
+  });
+
+  return { globalLimiter, authLimiter, aiLimiter, fileLimiter };
 }

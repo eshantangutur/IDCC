@@ -127,6 +127,9 @@ export function loadConfig(env = process.env, overrides = {}) {
       demoReason,
       maxSpeechChars: 20000,
     },
+    upload: {
+      maxBytes: Math.min(Math.max(int(env.UPLOAD_MAX_BYTES, 5 * 1024 * 1024), 1024), 20 * 1024 * 1024),
+    },
     rateLimits: {
       globalWindowMs: int(env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
       globalMax: int(env.RATE_LIMIT_MAX, 600),
@@ -134,6 +137,8 @@ export function loadConfig(env = process.env, overrides = {}) {
       authMax: int(env.AUTH_RATE_LIMIT_MAX, 20),
       aiWindowMs: int(env.AI_RATE_LIMIT_WINDOW_MS, 60 * 60 * 1000),
       aiMax: int(env.AI_RATE_LIMIT_MAX, 30),
+      fileWindowMs: int(env.FILE_RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
+      fileMax: int(env.FILE_RATE_LIMIT_MAX, 40),
     },
   };
 

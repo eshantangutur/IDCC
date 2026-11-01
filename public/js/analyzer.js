@@ -28,6 +28,10 @@ if (shell) {
   const caseSelect = document.getElementById('caseId');
   const wordCount = document.getElementById('wordCount');
   const charCount = document.getElementById('charCount');
+  const uploadButton = document.getElementById('uploadButton');
+  const fileInput = document.getElementById('speechFile');
+  const fileHint = document.getElementById('fileHint');
+  const defaultFileHint = fileHint.textContent;
   const analyzeButton = document.getElementById('analyzeButton');
   const errorBox = document.getElementById('formError');
   const errorText = errorBox.querySelector('[data-error-text]');
@@ -39,6 +43,10 @@ if (shell) {
   document.getElementById('modeSlot').innerHTML = meta.ai.mode === 'demo' ? demoBanner(meta) : liveBanner(meta);
 
   const maxChars = meta.limits?.maxSpeechChars ?? 20000;
+  const maxUploadBytes = meta.limits?.maxUploadBytes ?? 5 * 1024 * 1024;
+  const maxUploadLabel = maxUploadBytes >= 1024 * 1024
+    ? `${Math.round(maxUploadBytes / (1024 * 1024))} MB`
+    : `${Math.max(1, Math.round(maxUploadBytes / 1024))} KB`;
   contentInput.setAttribute('maxlength', String(maxChars));
 
   let currentFormat = meta.formats.find((entry) => entry.id === param('format')) || meta.formats[0];
@@ -118,15 +126,47 @@ if (shell) {
     charCount.style.color = text.length > maxChars ? 'var(--critical)' : '';
   }
 
-  function showError(message) {
+  function showError(message, { retry = true } = {}) {
     errorText.textContent = message;
     errorBox.hidden = false;
-    retryButton.hidden = false;
+    retryButton.hidden = !retry;
   }
 
   function clearError() {
     errorBox.hidden = true;
     retryButton.hidden = true;
+  }
+
+  async function loadFile(file) {
+    if (!file || pending) return;
+
+    fileHint.textContent = defaultFileHint;
+    clearError();
+
+    if (!/\.(txt|md|markdown|docx|pdf)$/i.test(file.name)) {
+      showError('Choose a .txt, .md, .docx, or .pdf file.', { retry: false });
+      fileInput.value = '';
+      return;
+    }
+    if (file.size > maxUploadBytes) {
+      showError(`That file is larger than ${maxUploadLabel}.`, { retry: false });
+      fileInput.value = '';
+      return;
+    }
+
+    setButtonLoading(uploadButton, true, 'Reading file...');
+    try {
+      const result = await api.upload('/api/extract', file, { timeout: 60000 });
+      contentInput.value = result.text;
+      updateCounts();
+      fileHint.textContent = `${result.filename}: ${result.characters.toLocaleString()} characters read. Review the text before analyzing.`;
+      toast('File loaded into the editor.', 'success');
+    } catch (error) {
+      showError(error.message || 'That file could not be read. Try another format.', { retry: false });
+    } finally {
+      setButtonLoading(uploadButton, false);
+      fileInput.value = '';
+    }
   }
 
   function validate() {
@@ -140,11 +180,11 @@ if (shell) {
     const content = contentInput.value.trim();
     if (!content) {
       contentInput.focus();
-      return 'Paste the speech text you want analysed.';
+      return 'Paste or upload the speech text you want analysed.';
     }
     if (content.length < 40) {
       contentInput.focus();
-      return 'The speech is too short to analyse. Paste at least a full paragraph (40 characters).';
+      return 'The speech is too short to analyse. Add at least a full paragraph (40 characters).';
     }
     if (content.length > maxChars) {
       contentInput.focus();
@@ -249,6 +289,9 @@ if (shell) {
     submitAnalysis();
   });
 
+  uploadButton.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => loadFile(fileInput.files?.[0]));
+
   contentInput.addEventListener('input', updateCounts);
   contentInput.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
@@ -258,6 +301,8 @@ if (shell) {
   });
   clearButton.addEventListener('click', () => {
     contentInput.value = '';
+    fileInput.value = '';
+    fileHint.textContent = defaultFileHint;
     updateCounts();
     clearError();
     contentInput.focus();

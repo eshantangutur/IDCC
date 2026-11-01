@@ -25,6 +25,7 @@
     </ul>
 
     <h2>2. How speech text is processed</h2>
+    <p>You can paste speech text or upload a .txt, .md, .docx, or .pdf file. Uploaded files are held in memory only long enough to extract their text and are not written to disk or included in the database. If a file cannot be read, the server discards it. The extracted text is then handled like pasted text, including being sent to the configured model provider only when live AI analysis is enabled.</p>
     <p>When live AI analysis is configured, the speech you submit is sent from the server to the configured model provider (xAI's Grok API by default, or Groq when configured) together with the selected format's rubric and instructions. The provider's own retention and training terms apply to that request. The API key is stored only in the server environment and is never sent to the browser.</p>
     <p>When no AI credentials are configured, or demo mode is forced, analysis runs entirely on the server using local rules. In that mode, no speech text leaves the server.</p>
 
@@ -33,7 +34,7 @@
       <li>We do not sell your data.</li>
       <li>We do not include third-party analytics or advertising trackers.</li>
       <li>We do not share one user's speeches with another account. Every database query is scoped to the signed-in user.</li>
-      <li>We do not accept file uploads. Only pasted text is accepted.</li>
+      <li>We do not store uploaded files. Only the extracted text is saved when you run an analysis.</li>
     </ul>
 
     <h2>4. Cookies</h2>

@@ -15,6 +15,7 @@ import { createCasesRouter } from './routes/cases.js';
 import { createSpeechesRouter } from './routes/speeches.js';
 import { createAnalysesRouter } from './routes/analyses.js';
 import { createAnalyzeRouter } from './routes/analyze.js';
+import { createExtractRouter } from './routes/extract.js';
 import { createStatsRouter } from './routes/stats.js';
 import { createAiService } from './services/ai/index.js';
 import { createAnalysisService } from './services/analysis-service.js';
@@ -56,7 +57,7 @@ export function createApp({ config, logger = createLogger({ level: config.logLev
     })
   );
 
-  const { globalLimiter, authLimiter, aiLimiter } = createRateLimiters(config);
+  const { globalLimiter, authLimiter, aiLimiter, fileLimiter } = createRateLimiters(config);
 
   // API responses contain private data and must never be cached.
   app.use('/api', (req, res, next) => {
@@ -71,6 +72,7 @@ export function createApp({ config, logger = createLogger({ level: config.logLev
   app.use('/api/auth/register', authLimiter);
   app.use('/api/auth/change-password', authLimiter);
   app.use('/api/analyze', aiLimiter);
+  app.use('/api/extract', fileLimiter);
 
   app.get('/api/health', (req, res) => {
     res.json({
@@ -87,6 +89,7 @@ export function createApp({ config, logger = createLogger({ level: config.logLev
   app.use('/api/speeches', createSpeechesRouter({ db, config }));
   app.use('/api/analyses', createAnalysesRouter({ db }));
   app.use('/api/analyze', createAnalyzeRouter({ config, analysisService }));
+  app.use('/api/extract', createExtractRouter({ config, logger }));
   app.use('/api/stats', createStatsRouter({ db }));
   app.use('/api', apiNotFound);
 

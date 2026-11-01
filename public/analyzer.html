@@ -18,7 +18,7 @@
         <div class="page-header">
           <div>
             <h1>Analyze a debate speech</h1>
-            <p>Pick the format, add the resolution and side, then paste the speech.</p>
+            <p>Pick the format, add the resolution and side, then paste or upload the speech.</p>
           </div>
           <a class="btn btn-secondary btn-sm" href="/dashboard.html">Cancel</a>
         </div>
@@ -61,11 +61,15 @@
               <div class="field">
                 <div class="row-between">
                   <label for="content">Speech text</label>
-                  <span class="tiny muted mono" id="wordCount">0 words</span>
+                  <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-end">
+                    <span class="tiny muted mono" id="wordCount">0 words</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="uploadButton">Upload file</button>
+                    <input id="speechFile" type="file" accept=".txt,.md,.markdown,.docx,.pdf,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+                  </div>
                 </div>
-                <textarea class="speech-editor" id="content" name="content" required placeholder="Paste the speech here. Include the claims, evidence, reasoning, and impacts you want checked."></textarea>
+                <textarea class="speech-editor" id="content" name="content" required placeholder="Paste the speech here or upload a file. Include the claims, evidence, reasoning, and impacts you want checked."></textarea>
                 <div class="editor-meta">
-                  <span>Pasted text only. Do not include material you do not have permission to analyze.</span>
+                  <span id="fileHint">Text, Markdown, Word, or PDF. The file is read in memory and is not stored.</span>
                   <span class="mono" id="charCount">0 characters</span>
                 </div>
               </div>

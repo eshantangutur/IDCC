@@ -6,14 +6,14 @@ This document records the security decisions made in this MVP, the threats they 
 
 ## Threat model
 
-The application stores private competitive-debate material and accepts arbitrary pasted text. The relevant adversaries are:
+The application stores private competitive-debate material and accepts arbitrary pasted text and uploaded documents. The relevant adversaries are:
 
-1. An unauthenticated visitor trying to register or log in as someone else, or to exhaust AI quota.
+1. An unauthenticated visitor trying to register or log in as someone else, exhaust AI quota, or upload files without an account.
 2. An authenticated user trying to read, modify or delete another user's cases, speeches, analyses or findings by changing an identifier.
 3. An attacker attempting script injection through stored content (speech text, titles, AI output) or reflected input.
 4. A cross-site attacker using a victim's browser to submit state-changing requests.
 5. An operator error leaking API keys, password hashes or session tokens.
-6. Malicious instructions embedded inside a pasted speech, aimed at the analysis model (prompt injection).
+6. A malicious document crafted to exploit a PDF or Word parser, exhaust server memory, or smuggle instructions into the analysis model (prompt injection).
 
 ## Implemented controls
 
@@ -39,12 +39,12 @@ The application stores private competitive-debate material and accepts arbitrary
 - **CSRF**: a 64-character random token lives in the session and is mirrored in a readable `af.csrf` cookie. Every `POST`, `PUT` and `DELETE` under `/api` must send it back in `X-CSRF-Token`. Comparison uses `crypto.timingSafeEqual`. Origin/Referer-derived host checks reject cross-origin state-changing requests.
 - **CORS**: requests with an `Origin` header are allowed only for the request's own host or origins listed in `ALLOWED_ORIGINS`. Credentials are permitted only for those origins.
 - **Rate limiting**: global API limiter, stricter limiter on `register`, `login` and `change-password`, and a per-user limiter on `/api/analyze`. All limits and windows are configurable.
-- **Request size**: JSON bodies capped at 300 kB, form bodies at 20 kB, speech text capped at 20,000 characters server-side.
+- **Request size**: JSON bodies capped at 300 kB, form bodies at 20 kB, speech text capped at 20,000 characters server-side. Uploads are limited to one file, 5 MB by default, and 20,000 extracted characters.
 - **Input validation**: every route validates types, lengths, enums and identifiers before use; validation errors return field hints without internal detail.
 - **SQL injection**: only prepared statements with bound parameters. No route builds SQL from user input; `LIKE` searches escape `%`, `_` and `\`.
 - **Authorization**: every query for cases, speeches, versions, analyses and statistics is scoped with `user_id = ?`. Requests for another user's record return `404`, not `403`, so record existence is not disclosed.
 - **XSS**: all user-controlled and AI-generated text is inserted into the DOM through `escapeHtml()` in `public/js/core.js`. Argument map labels are set with `textContent`. The CSP blocks inline scripts as a second layer.
-- **Uploads**: not implemented. Only pasted text is accepted, which removes the file-upload attack surface entirely.
+- **Uploads**: authenticated multipart endpoint at `/api/extract`, with a per-user rate limit. One file per request, 5 MB default. Files are held in memory, never written to disk, and discarded after extraction. Allowed types are `.txt`, `.md`, `.markdown`, `.docx`, and `.pdf`; text must be valid UTF-8, and PDF/Word files must have matching signatures. DOCX and PDF parsing uses `mammoth` and `pdfjs-dist`, so those parsers process untrusted input inside the Node process and must be kept current. DOCX archives that expand beyond 25 MB are rejected before parsing to limit ZIP-bomb memory use. This is not a malware scanner; scanned PDFs are rejected because they contain no selectable text.
 - **Error handling**: unexpected errors return a generic 500 message. Stack traces are logged only outside production. Request bodies, passwords, session ids and API keys are never logged.
 
 ### AI integration
@@ -88,6 +88,7 @@ The application stores private competitive-debate material and accepts arbitrary
 - [ ] Add monitoring and alerting for authentication failures, 5xx rates and rate-limit saturation.
 - [ ] Add a content-security reporting endpoint (CSP `report-to`) and monitor violations.
 - [ ] Load test SQLite and the analysis queue under expected concurrency.
+- [ ] Fuzz the DOCX and PDF extraction paths, cap parser CPU and memory, and keep `mammoth` and `pdfjs-dist` patched.
 - [ ] Document an incident-response procedure and a security contact.
 - [ ] Re-check the CSP after any frontend change: inline styles are allowed, inline scripts are not.
 

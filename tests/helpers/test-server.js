@@ -55,6 +55,32 @@ export class TestClient {
     return { status: response.status, data, headers: response.headers };
   }
 
+  async postForm(path, formData, { csrf = true, headers = {} } = {}) {
+    const requestHeaders = { ...headers };
+    if (csrf) {
+      const token = this.cookies.get('af.csrf');
+      if (token) requestHeaders['x-csrf-token'] = decodeURIComponent(token);
+    }
+    if (this.cookies.size > 0) requestHeaders.cookie = this.cookieHeader();
+
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      method: 'POST',
+      headers: requestHeaders,
+      body: formData,
+      redirect: 'manual',
+    });
+
+    this.storeCookies(response);
+    const text = await response.text();
+    let data = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
+    }
+    return { status: response.status, data, headers: response.headers };
+  }
+
   get(path, options) {
     return this.request('GET', path, undefined, options);
   }

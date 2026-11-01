@@ -100,7 +100,8 @@ async function request(method, path, body, { timeout = 120000 } = {}) {
   const timer = setTimeout(() => controller.abort(), timeout);
   try {
     const headers = { Accept: 'application/json' };
-    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+    if (body !== undefined && !isFormData) headers['Content-Type'] = 'application/json';
     const csrf = readCookie('af.csrf');
     if (csrf && method !== 'GET' && method !== 'HEAD') headers['X-CSRF-Token'] = csrf;
 
@@ -109,7 +110,7 @@ async function request(method, path, body, { timeout = 120000 } = {}) {
       headers,
       credentials: 'same-origin',
       cache: 'no-store',
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
       signal: controller.signal,
     });
 
@@ -151,6 +152,11 @@ export const api = {
   post: (path, body, options) => request('POST', path, body ?? {}, options),
   put: (path, body, options) => request('PUT', path, body ?? {}, options),
   delete: (path, body, options) => request('DELETE', path, body ?? {}, options),
+  upload: (path, file, options) => {
+    const form = new FormData();
+    form.append('file', file);
+    return request('POST', path, form, options);
+  },
 };
 
 let metaCache = null;

@@ -55,6 +55,7 @@ export function createMetaRouter({ config }) {
         maxSpeechChars: config.ai.maxSpeechChars,
         minSpeechChars: 40,
         maxCases: 200,
+        maxUploadBytes: config.upload.maxBytes,
       },
     });
   });
