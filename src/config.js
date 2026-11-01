@@ -39,15 +39,16 @@ export function loadConfig(env = process.env, overrides = {}) {
 
   if (onVercel && !databaseUrl) {
     throw new Error(
-      'TURSO_DATABASE_URL is required on Vercel because serverless functions cannot write a local SQLite file. ' +
-        'Add a Turso database to the project and set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN.'
+      'TURSO_DATABASE_URL is missing. Serverless functions cannot write a local SQLite file. ' +
+        'In Vercel, open Project Settings -> Environment Variables, add the Turso integration, ' +
+        'connect the database to Production and Preview, then redeploy.'
     );
   }
 
   if (isProduction && secret.length < 32) {
     throw new Error(
-      'SESSION_SECRET must be set to at least 32 characters when NODE_ENV=production. ' +
-        'Generate one with: node -e "console.log(require(\'node:crypto\').randomBytes(48).toString(\'hex\'))"'
+      'SESSION_SECRET must be set to at least 32 characters in production and on Vercel. ' +
+        'Add it in Vercel Project Settings -> Environment Variables for Production and Preview, then redeploy.'
     );
   }
 
