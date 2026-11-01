@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New analysis — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="analyzer">
+  <div class="app-shell">
+    <aside class="sidebar" id="appSidebar" aria-label="Workspace navigation"></aside>
+    <div class="app-body">
+      <header class="topbar" id="appTopbar"></header>
+      <main class="page">
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">New analysis</span>
+            <h1>Build the forensic report</h1>
+            <p>Select the format standard, supply the resolution and side, then paste the speech exactly as it was delivered.</p>
+          </div>
+          <a class="btn btn-secondary btn-sm" href="/dashboard.html">Cancel</a>
+        </div>
+
+        <div id="modeSlot" class="stack-sm"></div>
+        <div id="reviseSlot" class="stack-sm" style="margin-top:12px"></div>
+
+        <div class="editor-grid" style="margin-top:16px">
+          <form id="analysisForm" class="card analysis-workspace" novalidate>
+            <div class="analysis-config">
+              <div class="field">
+                <span class="label">Debate format</span>
+                <div class="format-picker" id="formatPicker" role="radiogroup" aria-label="Debate format"></div>
+                <input type="hidden" id="formatInput" name="format" value="pf">
+              </div>
+
+              <div class="form-grid">
+                <div class="field span-2">
+                  <label for="resolution">Resolution or topic</label>
+                  <input class="input" id="resolution" name="resolution" type="text" maxlength="500" placeholder="Resolved: The United States should substantially increase funding for public transit." required>
+                </div>
+                <div class="field">
+                  <label for="side">Side / position</label>
+                  <select class="select" id="side" name="side" required></select>
+                </div>
+                <div class="field">
+                  <label for="speechType">Speech type</label>
+                  <select class="select" id="speechType" name="speechType" required></select>
+                </div>
+                <div class="field span-2">
+                  <label for="caseId">Attach to a saved case <span class="muted tiny">(optional)</span></label>
+                  <select class="select" id="caseId" name="caseId">
+                    <option value="">No case — standalone analysis</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="analysis-editor">
+              <div class="field">
+                <div class="row-between">
+                  <label for="content">Speech or argument text</label>
+                  <span class="tiny muted mono" id="wordCount">0 words</span>
+                </div>
+                <textarea class="speech-editor" id="content" name="content" required placeholder="Paste the speech here. Include the full text of the speech you want reconstructed — claims, evidence, warrants and impacts."></textarea>
+                <div class="editor-meta">
+                  <span>Pasted text only. Do not include confidential material you do not have the right to process.</span>
+                  <span class="mono" id="charCount">0 characters</span>
+                </div>
+              </div>
+
+              <div id="formError" class="banner banner--error" hidden role="alert">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                <div>
+                  <span data-error-text></span>
+                  <div style="margin-top:8px"><button type="button" class="btn btn-secondary btn-sm" data-retry hidden>Retry analysis</button></div>
+                </div>
+              </div>
+
+              <div id="analyzingSlot"></div>
+
+              <div class="row" style="justify-content:flex-end;gap:8px">
+                <button type="button" class="btn btn-ghost" id="clearButton">Clear text</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="analyzeButton">Analyze argument</button>
+              </div>
+            </div>
+          </form>
+
+          <aside class="stack">
+            <div class="card" id="formatGuide">
+              <div class="skeleton" style="height:160px"></div>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:10px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+                What happens when you analyze
+              </div>
+              <ol class="stack-sm" style="margin:0;padding-left:18px;color:var(--muted);font-size:.84rem">
+                <li>Your speech is sent to the server with the selected format's rubric and vocabulary.</li>
+                <li>The response is validated against a strict schema; malformed output is repaired or rejected.</li>
+                <li>Findings, argument nodes and edges are stored against your account only.</li>
+                <li>You are redirected to the report, where every finding cites its passage.</li>
+              </ol>
+              <p class="tiny muted" style="margin-top:12px">Live analysis can take 20–60 seconds. Demo mode returns immediately.</p>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/js/analyzer.js"></script>
+</body>
+</html>

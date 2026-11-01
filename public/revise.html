@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revision workspace — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="revise">
+  <div class="app-shell">
+    <aside class="sidebar" id="appSidebar" aria-label="Workspace navigation"></aside>
+    <div class="app-body">
+      <header class="topbar" id="appTopbar"></header>
+      <main class="page">
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">Revision workspace</span>
+            <h1 id="speechTitle">Loading speech…</h1>
+            <p id="speechMeta">Compare the original against a revision, then re-run the analysis.</p>
+          </div>
+          <div class="row" id="headerActions"></div>
+        </div>
+
+        <div id="noticeSlot" class="stack-sm"></div>
+
+        <div class="revision-grid" style="margin-top:16px">
+          <div class="revision-col">
+            <div class="row-between">
+              <span class="label">Original speech</span>
+              <span class="tiny muted" id="originalMeta"></span>
+            </div>
+            <textarea class="speech-editor" id="originalEditor" readonly spellcheck="false" aria-label="Original speech"></textarea>
+          </div>
+          <div class="revision-col">
+            <div class="row-between">
+              <span class="label">Revised speech</span>
+              <span class="tiny muted" id="revisedMeta">0 words</span>
+            </div>
+            <textarea class="speech-editor" id="revisedEditor" spellcheck="true" aria-label="Revised speech" placeholder="Rewrite the speech here. Then save a version or re-run the analysis."></textarea>
+          </div>
+        </div>
+
+        <div class="row-between" style="margin-top:12px">
+          <div class="row">
+            <button type="button" class="btn btn-primary" id="saveVersionButton">Save new version</button>
+            <button type="button" class="btn btn-secondary" id="reanalyzeButton">Re-run analysis</button>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="diffToggle" checked>
+            <span>Highlight modifications</span>
+          </label>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="form-grid">
+            <div class="field">
+              <label for="baselineSelect">Compare against</label>
+              <select class="select" id="baselineSelect"></select>
+            </div>
+            <div class="field">
+              <label for="versionLabel">Version label <span class="muted tiny">(optional)</span></label>
+              <input class="input" id="versionLabel" type="text" maxlength="120" placeholder="e.g. Added weighing paragraph">
+            </div>
+          </div>
+          <p class="tiny muted" style="margin-top:10px">Saving stores the current revised text as a new immutable version. Re-running the analysis creates another version only when the text has changed.</p>
+        </div>
+
+        <div class="grid-2" style="margin-top:20px">
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Highlighted modifications</div>
+                <p class="tiny muted" style="margin-top:4px">Word-level comparison of the baseline and the revised text.</p>
+              </div>
+              <span class="chip" id="diffStats">—</span>
+            </div>
+            <div id="diffPanel" class="diff-view"></div>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Weakness tracking</div>
+                <p class="tiny muted" style="margin-top:4px">Findings from the most recent report on this speech.</p>
+              </div>
+              <span class="chip" id="trackingCount">—</span>
+            </div>
+            <div id="trackingPanel"></div>
+          </section>
+        </div>
+
+        <section class="card" style="margin-top:20px">
+          <div class="card-header">
+            <div class="card-title">Version history &amp; reports</div>
+            <span class="chip" id="versionCount">0</span>
+          </div>
+          <div class="version-list" id="versionList"></div>
+          <div id="analysisLinks" style="margin-top:16px"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/js/revise.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="dashboard">
+  <div class="app-shell">
+    <aside class="sidebar" id="appSidebar" aria-label="Workspace navigation"></aside>
+    <div class="app-body">
+      <header class="topbar" id="appTopbar"></header>
+      <main class="page">
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">Workspace</span>
+            <h1 id="welcomeHeading">Welcome back</h1>
+            <p id="welcomeSub">Your analysis history, saved cases and format workspaces.</p>
+          </div>
+          <a class="btn btn-primary" href="/analyzer.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span>New analysis</span>
+          </a>
+        </div>
+
+        <div id="demoSlot" class="stack-sm"></div>
+        <section class="quick-stats" id="statsRow" aria-label="Workspace statistics"></section>
+
+        <section style="margin-top:26px">
+          <div class="row-between" style="margin-bottom:12px">
+            <div>
+              <h2>Debate formats</h2>
+              <p class="small muted">Each workspace applies its own rubric and analysis tool.</p>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="/analyzer.html">Open analyzer</a>
+          </div>
+          <div class="format-picker" id="formatGrid"></div>
+        </section>
+
+        <div class="dashboard-grid" style="margin-top:26px">
+          <div class="stack">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+                    Recent analyses
+                  </div>
+                  <p class="tiny muted" style="margin-top:4px">Your latest forensic reports.</p>
+                </div>
+                <a class="btn btn-ghost btn-sm" href="/history.html">View all</a>
+              </div>
+              <div id="recentList"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                    Saved cases
+                  </div>
+                  <p class="tiny muted" style="margin-top:4px">Reusable cases with contentions and linked speeches.</p>
+                </div>
+                <a class="btn btn-ghost btn-sm" href="/cases.html">Manage cases</a>
+              </div>
+              <div id="casesList"></div>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
+                  Analysis activity
+                </div>
+                <span class="tiny muted">Last 14 days</span>
+              </div>
+              <div id="trendChart"></div>
+              <p class="tiny muted" style="margin-top:10px">Analyses created per day. Hover points for daily counts.</p>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                  Finding mix
+                </div>
+              </div>
+              <div id="findingsMix"></div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/js/dashboard.js"></script>
+</body>
+</html>

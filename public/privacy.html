@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy policy — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <main class="doc">
+    <a class="back" href="/index.html">&larr; Back to Argument Forensics</a>
+    <span class="eyebrow">Legal</span>
+    <h1>Privacy policy</h1>
+    <p class="doc-meta">Last updated: 31 October 2026</p>
+
+    <p>Argument Forensics is a debate-analysis workspace. This policy explains what the application stores, how it is used, and the choices you have. It describes the reference implementation in this repository; an operator deploying their own copy is responsible for their own policy and jurisdiction-specific obligations.</p>
+
+    <h2>1. What we store</h2>
+    <ul>
+      <li><strong>Account data:</strong> email address, an optional display name, a bcrypt password hash, and account timestamps. Plaintext passwords are never stored.</li>
+      <li><strong>Session data:</strong> server-side session records in SQLite, referenced by an HttpOnly session cookie. Sessions expire and are deleted on sign-out.</li>
+      <li><strong>Debate content:</strong> resolutions, cases, speech text, speech versions, analysis results, findings and argument-graph nodes you create.</li>
+      <li><strong>Technical data:</strong> rate-limit counters held in memory, and server logs that record request paths, status codes and errors. Logs do not contain passwords, session tokens, API keys or full speech text.</li>
+    </ul>
+
+    <h2>2. How speech text is processed</h2>
+    <p>When live AI analysis is configured, the speech you submit is sent from the server to the configured model provider (xAI's Grok API by default, or Groq when configured) together with the selected format's rubric and instructions. The provider's own retention and training terms apply to that request. The API key is stored only in the server environment and is never sent to the browser.</p>
+    <p>When no AI credentials are configured, or demo mode is forced, analysis runs entirely on the server using local structural heuristics. In that mode, no speech text leaves the server.</p>
+
+    <h2>3. What we do not do</h2>
+    <ul>
+      <li>We do not sell your data.</li>
+      <li>We do not include third-party analytics or advertising trackers.</li>
+      <li>We do not share one user's speeches with another account. Every database query is scoped to the signed-in user.</li>
+      <li>We do not accept file uploads in this MVP. Only pasted text is accepted.</li>
+    </ul>
+
+    <h2>4. Cookies</h2>
+    <p>Two cookies are used: an HttpOnly session cookie (SameSite=Lax, Secure in production) and a readable CSRF token cookie used to protect state-changing requests. Neither contains your password or your speech text.</p>
+
+    <h2>5. Retention and deletion</h2>
+    <p>Your cases, speeches, versions, analyses and findings remain until you delete them. Deleting a case removes its speeches and analyses through database cascades. Deleting your account permanently removes your user record, sessions, cases, speeches, versions, analyses, findings and argument-graph data. Deletion is immediate and cannot be undone.</p>
+
+    <h2>6. Security</h2>
+    <p>The application uses bcrypt password hashing, server-side sessions, CSRF protection, a restrictive Content-Security-Policy, rate limiting, request-size limits and parameterised SQL. No system is perfectly secure; the repository's SECURITY.md lists reviews still required before public deployment.</p>
+
+    <h2>7. Children</h2>
+    <p>The service is intended for competitive debaters and coaches. It is not directed at children under 13, and accounts should not be created for them.</p>
+
+    <h2>8. Contact</h2>
+    <p>Privacy questions: <a href="mailto:privacy@argumentforensics.app">privacy@argumentforensics.app</a>. Security reports: <a href="mailto:security@argumentforensics.app">security@argumentforensics.app</a>.</p>
+  </main>
+</body>
+</html>

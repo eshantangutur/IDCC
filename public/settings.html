@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="settings">
+  <div class="app-shell">
+    <aside class="sidebar" id="appSidebar" aria-label="Workspace navigation"></aside>
+    <div class="app-body">
+      <header class="topbar" id="appTopbar"></header>
+      <main class="page">
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">Account</span>
+            <h1>Settings</h1>
+            <p>Manage your credentials, review the analysis configuration, and delete your data.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">Account</div>
+            </div>
+            <dl style="margin:0" id="profileList">
+              <div class="info-row"><dt>Email</dt><dd id="profileEmail">—</dd></div>
+              <div class="info-row"><dt>Display name</dt><dd id="profileName">—</dd></div>
+              <div class="info-row"><dt>Member since</dt><dd id="profileCreated">—</dd></div>
+              <div class="info-row"><dt>Account id</dt><dd id="profileId">—</dd></div>
+            </dl>
+            <div class="row" style="margin-top:16px">
+              <button type="button" class="btn btn-secondary btn-sm" id="signOutButton">Sign out of this device</button>
+            </div>
+            <p class="tiny muted" style="margin-top:10px">Signing out destroys the server-side session record and clears the session cookie.</p>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Change password</div>
+                <p class="tiny muted" style="margin-top:4px">All other sessions are revoked when the password changes.</p>
+              </div>
+            </div>
+            <div id="passwordFeedback" class="banner" hidden></div>
+            <form id="passwordForm" class="stack" novalidate>
+              <div class="field">
+                <label for="currentPassword">Current password</label>
+                <input class="input" id="currentPassword" type="password" autocomplete="current-password" required maxlength="200">
+              </div>
+              <div class="field">
+                <label for="newPassword">New password</label>
+                <input class="input" id="newPassword" type="password" autocomplete="new-password" required minlength="10" maxlength="200">
+                <span class="hint">At least 10 characters, including a letter and a number.</span>
+              </div>
+              <div class="field">
+                <label for="confirmPassword">Confirm new password</label>
+                <input class="input" id="confirmPassword" type="password" autocomplete="new-password" required maxlength="200">
+              </div>
+              <button type="submit" class="btn btn-primary" id="passwordButton">Update password</button>
+            </form>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">Analysis configuration</div>
+              <span id="aiModeChip" class="chip">—</span>
+            </div>
+            <dl style="margin:0" id="aiDetails">
+              <div class="info-row"><dt>Mode</dt><dd id="aiMode">—</dd></div>
+              <div class="info-row"><dt>Provider</dt><dd id="aiProvider">—</dd></div>
+              <div class="info-row"><dt>Model</dt><dd id="aiModel">—</dd></div>
+              <div class="info-row"><dt>Speech limit</dt><dd id="aiLimit">—</dd></div>
+            </dl>
+            <div id="aiReason" class="panel-note" style="margin-top:14px"></div>
+            <p class="small muted" style="margin-top:12px">
+              AI credentials are configured on the server only. Set <code>GROK_API_KEY</code> (xAI),
+              <code>GROQ_API_KEY</code> (Groq), or <code>AI_API_KEY</code> in the server environment, then restart the process.
+              Keys are never sent to the browser, never stored in this database, and never displayed here.
+            </p>
+            <p class="tiny muted" style="margin-top:8px">To force local heuristic analysis even when a key exists, set <code>AI_DEMO_MODE=true</code>.</p>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <div class="card-title">Data &amp; privacy</div>
+            </div>
+            <p class="small muted">Your cases, speeches, versions, analyses and findings are private to your account. Deleting a case removes its speeches and reports through database cascades.</p>
+            <div class="stack-sm" style="margin-top:14px">
+              <a class="btn btn-ghost btn-sm" href="/privacy.html">Read the privacy policy</a>
+              <a class="btn btn-ghost btn-sm" href="/terms.html">Read the terms of use</a>
+              <a class="btn btn-ghost btn-sm" href="mailto:support@argumentforensics.app">Contact support</a>
+            </div>
+          </section>
+        </div>
+
+        <section class="card" style="margin-top:20px;border-color:rgba(248,113,113,.3)">
+          <div class="card-header">
+            <div>
+              <div class="card-title" style="color:#fca5a5">Danger zone</div>
+              <p class="tiny muted" style="margin-top:4px">Permanent, irreversible actions.</p>
+            </div>
+          </div>
+          <div class="row-between">
+            <p class="small" style="color:var(--text-soft);max-width:70ch">
+              Deleting your account permanently removes your user record, sessions, cases, speeches, speech versions,
+              analyses, findings and argument maps. Nothing is retained.
+            </p>
+            <button type="button" class="btn btn-danger" id="deleteAccountButton">Delete account and all data</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/js/settings.js"></script>
+</body>
+</html>

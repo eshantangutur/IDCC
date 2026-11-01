@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="login">
+  <div class="auth-layout">
+    <aside class="auth-aside">
+      <a class="brand" href="/" style="padding:0">
+        <span class="brand__mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 13h7v7h-7zM11 7.5h4.5A1.5 1.5 0 0 1 17 9v4"/></svg>
+        </span>
+        <span>
+          <span class="brand__name">ARGUMENT<br>FORENSICS</span>
+          <span class="brand__tag">Analysis workspace</span>
+        </span>
+      </a>
+      <div class="auth-aside__body">
+        <span class="eyebrow">Dissect. Expose. Strengthen.</span>
+        <h1>Your arguments, reconstructed.</h1>
+        <p>Return to your saved cases, argument maps and weakness reports. Continue a revision, or start a new analysis across any of the five supported formats.</p>
+        <div class="auth-points">
+          <div class="auth-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg><span>Server-side sessions with hashed passwords</span></div>
+          <div class="auth-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg><span>Private case library and analysis history</span></div>
+          <div class="auth-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg><span>Format-specific rubrics — no generic scoring</span></div>
+        </div>
+      </div>
+      <p class="tiny muted">Analyses are AI-assisted judgments, not verified facts.</p>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-card__top">
+          <span class="eyebrow">Account</span>
+          <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle aria-label="Switch theme"></button>
+        </div>
+        <h2>Sign in</h2>
+        <p>Continue to your analysis workspace.</p>
+
+        <div id="formError" class="banner banner--error" hidden role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span data-error-text></span>
+        </div>
+
+        <form id="loginForm" class="stack" novalidate autocomplete="on">
+          <div class="field">
+            <label for="email">Email address</label>
+            <input class="input" id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input class="input" id="password" name="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Your password">
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit" id="submitButton">Sign in</button>
+        </form>
+
+        <p class="auth-switch">New to Argument Forensics? <a href="/register.html" data-register-link>Create an account</a></p>
+        <p class="auth-legal">By signing in you agree to the <a href="/terms.html">terms of use</a> and <a href="/privacy.html">privacy policy</a>.</p>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account — Argument Forensics</title>
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="register">
+  <div class="auth-layout">
+    <aside class="auth-aside">
+      <a class="brand" href="/" style="padding:0">
+        <span class="brand__mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 13h7v7h-7zM11 7.5h4.5A1.5 1.5 0 0 1 17 9v4"/></svg>
+        </span>
+        <span>
+          <span class="brand__name">ARGUMENT<br>FORENSICS</span>
+          <span class="brand__tag">Analysis workspace</span>
+        </span>
+      </a>
+      <div class="auth-aside__body">
+        <span class="eyebrow">Five formats. One standard: evidence.</span>
+        <h1>See the structure before your opponent does.</h1>
+        <p>Create a workspace to store cases, analyse speeches, map arguments and track which weaknesses survive a revision.</p>
+        <div class="auth-points">
+          <div class="auth-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg><span>Public Forum, Lincoln-Douglas, Policy, Congress and World Schools</span></div>
+          <div class="auth-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg><span>Passage-level findings with confidence indicators</span></div>
+          <div class="auth-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg><span>Unlimited revisions, version history and comparison</span></div>
+        </div>
+      </div>
+      <p class="tiny muted">AI output is evaluative and can be wrong. Always check the cited passage.</p>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-card__top">
+          <span class="eyebrow">Account</span>
+          <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle aria-label="Switch theme"></button>
+        </div>
+        <h2>Create your account</h2>
+        <p>Start with one speech. No credit card, no file uploads.</p>
+
+        <div id="formError" class="banner banner--error" hidden role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          <span data-error-text></span>
+        </div>
+
+        <form id="registerForm" class="stack" novalidate>
+          <div class="field">
+            <label for="displayName">Name <span class="muted tiny">(optional)</span></label>
+            <input class="input" id="displayName" name="displayName" type="text" autocomplete="name" maxlength="80" placeholder="How should we address you?">
+          </div>
+          <div class="field">
+            <label for="email">Email address</label>
+            <input class="input" id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input class="input" id="password" name="password" type="password" autocomplete="new-password" required minlength="10" maxlength="200" placeholder="At least 10 characters">
+            <span class="hint">At least 10 characters, including a letter and a number.</span>
+          </div>
+          <div class="field">
+            <label for="confirmPassword">Confirm password</label>
+            <input class="input" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required maxlength="200" placeholder="Repeat your password">
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="agree" name="agree" required>
+            <span>I agree to the <a href="/terms.html">terms of use</a> and <a href="/privacy.html">privacy policy</a>, and I understand that analyses are AI-assisted judgments.</span>
+          </label>
+          <button class="btn btn-primary btn-block btn-lg" type="submit" id="submitButton">Create account</button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a href="/login.html" data-login-link>Sign in</a></p>
+        <p class="auth-legal">Your speeches are private to your account. You can delete your account and all saved data at any time from Settings.</p>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/js/auth.js"></script>
+</body>
+</html>
