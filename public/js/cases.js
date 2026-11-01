@@ -18,8 +18,8 @@ import { mountShell } from './shell.js';
 
 const shell = await mountShell({
   page: 'cases',
-  title: 'My cases',
-  subtitle: 'Saved resolutions, contentions and linked analyses',
+  title: 'Cases',
+  subtitle: 'Saved cases and linked reports',
   actionsHtml: '<button class="btn btn-primary btn-sm" id="topbarNewCase" type="button">New case</button>',
 });
 
@@ -61,10 +61,10 @@ if (shell) {
     if (!currentCases.length) {
       const hasFilters = searchInput.value.trim() || formatFilter.value;
       grid.innerHTML = `<div style="grid-column:1/-1">${emptyState({
-        title: hasFilters ? 'No cases match your filters' : 'Your case library is empty',
+        title: hasFilters ? 'No cases match your filters' : 'No cases yet',
         message: hasFilters
           ? 'Try a different search term or clear the format filter.'
-          : 'Create a case to store a resolution, side and contentions, then attach analysed speeches to it.',
+          : 'Create a case to store a resolution, side, and contentions. You can attach speeches later.',
         action: hasFilters ? '<button type="button" class="btn btn-secondary btn-sm" data-clear-filters>Clear filters</button>' : '<button type="button" class="btn btn-primary btn-sm" data-new-case>Create your first case</button>',
       })}</div>`;
       grid.querySelector('[data-clear-filters]')?.addEventListener('click', () => {
@@ -120,11 +120,11 @@ if (shell) {
     return `<form id="caseForm" class="stack" novalidate>
       <div class="field">
         <label for="caseTitle">Case title</label>
-        <input class="input" id="caseTitle" name="title" type="text" maxlength="160" required value="${escapeHtml(entry?.title || '')}" placeholder="e.g. Transit funding — Pro">
+        <input class="input" id="caseTitle" name="title" type="text" maxlength="160" required value="${escapeHtml(entry?.title || '')}" placeholder="Transit funding, Pro">
       </div>
       <div class="field">
         <label for="caseResolution">Resolution</label>
-        <textarea class="textarea" id="caseResolution" name="resolution" maxlength="500" required placeholder="Resolved: …">${escapeHtml(entry?.resolution || '')}</textarea>
+        <textarea class="textarea" id="caseResolution" name="resolution" maxlength="500" required placeholder="Resolved: ...">${escapeHtml(entry?.resolution || '')}</textarea>
       </div>
       <div class="form-grid">
         <div class="field">
@@ -140,7 +140,7 @@ if (shell) {
       </div>
       <div class="field">
         <label for="caseNotes">Notes <span class="muted tiny">(optional)</span></label>
-        <textarea class="textarea" id="caseNotes" name="notes" maxlength="8000" placeholder="Strategy notes, judge preferences, blocks to prepare…">${escapeHtml(entry?.notes || '')}</textarea>
+        <textarea class="textarea" id="caseNotes" name="notes" maxlength="8000" placeholder="Notes about strategy, judges, or blocks">${escapeHtml(entry?.notes || '')}</textarea>
       </div>
       <div class="field">
         <div class="row-between">
@@ -230,7 +230,7 @@ if (shell) {
         contentions,
       };
 
-      setButtonLoading(saveButton, true, 'Saving…');
+      setButtonLoading(saveButton, true, 'Saving...');
       try {
         if (entry) await api.put(`/api/cases/${entry.id}`, payload);
         else await api.post('/api/cases', payload);
@@ -254,12 +254,12 @@ if (shell) {
         body: `<div class="stack">
           <div class="row">${formatChip(entry.format)}<span class="chip">${escapeHtml(SIDE_LABELS[entry.side] || entry.side)}</span><span class="tiny muted">Updated ${escapeHtml(formatDate(entry.updatedAt))}</span></div>
           <div>
-            <span class="eyebrow">Resolution</span>
+            <h4>Resolution</h4>
             <p class="small" style="margin-top:4px;color:var(--text-soft)">${escapeHtml(entry.resolution)}</p>
           </div>
-          ${entry.notes ? `<div><span class="eyebrow">Notes</span><p class="small" style="margin-top:4px;color:var(--text-soft);white-space:pre-wrap">${escapeHtml(entry.notes)}</p></div>` : ''}
+          ${entry.notes ? `<div><h4>Notes</h4><p class="small" style="margin-top:4px;color:var(--text-soft);white-space:pre-wrap">${escapeHtml(entry.notes)}</p></div>` : ''}
           <div>
-            <span class="eyebrow">Contentions (${entry.contentions.length})</span>
+            <h4>Contentions (${entry.contentions.length})</h4>
             ${entry.contentions.length
               ? `<div class="stack-sm" style="margin-top:8px">${entry.contentions.map((contention, index) => `
                 <div class="component-item">
@@ -267,10 +267,10 @@ if (shell) {
                   <p class="component-item__text">${escapeHtml(contention.title)}</p>
                   <p class="small muted" style="white-space:pre-wrap">${escapeHtml(contention.body)}</p>
                 </div>`).join('')}</div>`
-              : '<p class="small muted" style="margin-top:6px">No contentions stored for this case.</p>'}
+              : '<p class="small muted" style="margin-top:6px">No contentions saved.</p>'}
           </div>
           <div>
-            <span class="eyebrow">Speeches &amp; analyses (${speeches.length})</span>
+            <h4>Speeches and reports (${speeches.length})</h4>
             ${speeches.length
               ? `<div class="stack-sm" style="margin-top:8px">${speeches.map((speech) => `
                 <div class="component-item">
@@ -278,14 +278,14 @@ if (shell) {
                     <span class="component-item__text">${escapeHtml(speech.title)}</span>
                     <span class="chip">v${speech.latestVersion}</span>
                   </div>
-                  <p class="tiny muted">${escapeHtml(speech.speechType)} · ${speech.analysisCount} report${speech.analysisCount === 1 ? '' : 's'} · ${escapeHtml(relativeTime(speech.updatedAt))}</p>
+                  <p class="tiny muted">${escapeHtml(speech.speechType)}, ${speech.analysisCount} report${speech.analysisCount === 1 ? '' : 's'}, ${escapeHtml(relativeTime(speech.updatedAt))}</p>
                   <div class="row" style="gap:6px">
                     ${speech.lastAnalysisId ? `<a class="btn btn-secondary btn-sm" href="/report.html?id=${speech.lastAnalysisId}">Latest report</a>` : ''}
                     <a class="btn btn-ghost btn-sm" href="/revise.html?id=${speech.id}">Revise</a>
                     <a class="btn btn-ghost btn-sm" href="/analyzer.html?speechId=${speech.id}">Analyze</a>
                   </div>
                 </div>`).join('')}</div>`
-              : '<p class="small muted" style="margin-top:6px">No speeches are attached to this case yet. Analyse a speech and select this case to attach it.</p>'}
+              : '<p class="small muted" style="margin-top:6px">No speeches are attached yet. Analyze a speech and select this case to attach it.</p>'}
           </div>
         </div>`,
         footer: `<button type="button" class="btn btn-ghost btn-sm" data-delete>${icons.trash}<span>Delete case</span></button>
@@ -311,7 +311,7 @@ if (shell) {
     const entry = currentCases.find((candidate) => candidate.id === caseId);
     const confirmed = await confirmDialog({
       title: 'Delete this case?',
-      message: `“${entry?.title || 'This case'}” and its speech links will be removed. Analyses of its speeches are deleted with them. This cannot be undone.`,
+      message: `This case (${entry?.title || 'Untitled'}) and its speech links will be removed. Reports on those speeches are deleted too. This cannot be undone.`,
       confirmLabel: 'Delete case',
       danger: true,
     });

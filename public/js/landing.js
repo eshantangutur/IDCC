@@ -27,12 +27,12 @@ async function refreshMode() {
     const [health, meta] = await Promise.all([api.get('/api/health'), api.get('/api/meta')]);
     if (modeLabel) {
       modeLabel.textContent = health.aiMode === 'demo'
-        ? 'Demo analysis available — no API key required'
-        : `Live AI analysis · ${meta.ai.model || 'configured model'}`;
+        ? 'Demo mode: no API key needed'
+        : `Live AI: ${meta.ai.model || 'configured model'}`;
     }
     if (modeDot) modeDot.style.background = health.aiMode === 'demo' ? '#d97706' : '#10b981';
   } catch {
-    if (modeLabel) modeLabel.textContent = 'Forensic argument analysis';
+    if (modeLabel) modeLabel.textContent = 'Debate speech analysis';
   }
 }
 

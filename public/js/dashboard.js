@@ -16,7 +16,7 @@ import { sparkline, donut } from './charts.js';
 const shell = await mountShell({
   page: 'dashboard',
   title: 'Dashboard',
-  subtitle: 'Overview of your argument analysis workspace',
+  subtitle: 'Your reports, cases, and activity',
   actionsHtml: '<a class="btn btn-secondary btn-sm" href="/analyzer.html">Analyze a speech</a>',
 });
 
@@ -27,8 +27,8 @@ if (shell) {
   const name = user.displayName || user.email.split('@')[0];
   document.getElementById('welcomeHeading').textContent = `${greeting}, ${name}.`;
   document.getElementById('welcomeSub').textContent = stats?.totals?.analyses
-    ? `${stats.totals.analyses} analys${stats.totals.analyses === 1 ? 'is' : 'es'} on record across ${stats.totals.cases} saved case${stats.totals.cases === 1 ? '' : 's'}.`
-    : 'Start with one speech. The report will show you exactly where the reasoning breaks.';
+    ? `${stats.totals.analyses} report${stats.totals.analyses === 1 ? '' : 's'} across ${stats.totals.cases} case${stats.totals.cases === 1 ? '' : 's'}.`
+    : 'Start with one speech. The report will show you where the reasoning is weak.';
 
   const demoSlot = document.getElementById('demoSlot');
   demoSlot.innerHTML = meta.ai.mode === 'demo' ? demoBanner(meta) : liveBanner(meta);
@@ -44,10 +44,10 @@ if (shell) {
 function renderStats(stats, meta) {
   const totals = stats?.totals ?? { analyses: 0, cases: 0, critical: 0, strengths: 0 };
   const cards = [
-    { label: 'Analyses', value: totals.analyses, hint: 'Reports stored' },
-    { label: 'Saved cases', value: totals.cases, hint: 'Case library' },
+    { label: 'Reports', value: totals.analyses, hint: 'Reports stored' },
+    { label: 'Cases', value: totals.cases, hint: 'Saved cases' },
     { label: 'Critical findings', value: totals.critical, hint: 'Across all reports' },
-    { label: 'Strong components', value: totals.strengths, hint: 'Worth preserving' },
+    { label: 'Strengths', value: totals.strengths, hint: 'Worth keeping' },
   ];
   document.getElementById('statsRow').innerHTML = cards.map((card) => `
     <div class="kpi">
@@ -56,9 +56,9 @@ function renderStats(stats, meta) {
       <span class="tiny muted">${escapeHtml(card.hint)}</span>
     </div>`).join('') + `
     <div class="kpi" style="background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.3)">
-      <span class="kpi__label">Analysis mode</span>
-      <span style="font-size:.95rem;font-weight:600;margin-top:4px">${meta.ai.mode === 'demo' ? 'Demo heuristics' : 'Live AI'}</span>
-      <span class="tiny muted">${escapeHtml(meta.ai.mode === 'demo' ? 'No credentials configured' : (meta.ai.model || 'configured model'))}</span>
+      <span class="kpi__label">Mode</span>
+      <span style="font-size:.95rem;font-weight:600;margin-top:4px">${meta.ai.mode === 'demo' ? 'Demo checker' : 'Live AI'}</span>
+      <span class="tiny muted">${escapeHtml(meta.ai.mode === 'demo' ? 'No AI key configured' : (meta.ai.model || 'configured model'))}</span>
     </div>`;
 }
 
@@ -69,7 +69,6 @@ function renderFormats(meta) {
       <span class="format-card__abbr">${escapeHtml(format.abbreviation.toUpperCase())}</span>
       <h4>${escapeHtml(format.name)}</h4>
       <p>${escapeHtml(format.tagline)}</p>
-      <span class="format-card__focus">${escapeHtml(format.specialTool.label)}</span>
     </a>`).join('');
 }
 
@@ -81,7 +80,7 @@ async function loadRecent() {
     if (!analyses.length) {
       container.innerHTML = emptyState({
         title: 'No analyses yet',
-        message: 'Paste a speech into the analyzer and Argument Forensics will reconstruct its structure.',
+        message: 'Paste a speech into the analyzer to get a report.',
         action: '<a class="btn btn-primary btn-sm" href="/analyzer.html">Start a new analysis</a>',
       });
       return;
@@ -154,7 +153,7 @@ function renderTrend(stats) {
   const total = series.reduce((sum, point) => sum + point.count, 0);
   document.getElementById('trendChart').innerHTML = `
     <div class="row-between" style="margin-bottom:10px">
-      <span class="eyebrow">Volume</span>
+      <span class="small muted">Volume</span>
       <span class="small">${total} in 14 days</span>
     </div>
     ${sparkline(series, { width: 420, height: 100 })}
@@ -181,6 +180,6 @@ function renderMix(stats) {
   }));
   document.getElementById('findingsMix').innerHTML = donut(segments);
   if (segments.length === 0) {
-    document.getElementById('findingsMix').innerHTML = '<p class="small muted">No findings recorded yet. Analyse a speech to populate this chart.</p>';
+    document.getElementById('findingsMix').innerHTML = '<p class="small muted">No findings yet. Analyze a speech to fill this chart.</p>';
   }
 }

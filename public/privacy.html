@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy policy — Argument Forensics</title>
+  <title>Privacy policy | Argument Forensics</title>
   <meta name="color-scheme" content="dark light">
   <script src="/js/theme-init.js"></script>
   <link rel="stylesheet" href="/css/styles.css">
@@ -11,11 +11,10 @@
 <body>
   <main class="doc">
     <a class="back" href="/index.html">&larr; Back to Argument Forensics</a>
-    <span class="eyebrow">Legal</span>
     <h1>Privacy policy</h1>
     <p class="doc-meta">Last updated: 31 October 2026</p>
 
-    <p>Argument Forensics is a debate-analysis workspace. This policy explains what the application stores, how it is used, and the choices you have. It describes the reference implementation in this repository; an operator deploying their own copy is responsible for their own policy and jurisdiction-specific obligations.</p>
+    <p>Argument Forensics is a debate speech analysis tool. This policy explains what the application stores, how it is used, and the choices you have. If someone else runs a copy of this application, that operator is responsible for their own policy and local legal requirements.</p>
 
     <h2>1. What we store</h2>
     <ul>
@@ -27,14 +26,14 @@
 
     <h2>2. How speech text is processed</h2>
     <p>When live AI analysis is configured, the speech you submit is sent from the server to the configured model provider (xAI's Grok API by default, or Groq when configured) together with the selected format's rubric and instructions. The provider's own retention and training terms apply to that request. The API key is stored only in the server environment and is never sent to the browser.</p>
-    <p>When no AI credentials are configured, or demo mode is forced, analysis runs entirely on the server using local structural heuristics. In that mode, no speech text leaves the server.</p>
+    <p>When no AI credentials are configured, or demo mode is forced, analysis runs entirely on the server using local rules. In that mode, no speech text leaves the server.</p>
 
     <h2>3. What we do not do</h2>
     <ul>
       <li>We do not sell your data.</li>
       <li>We do not include third-party analytics or advertising trackers.</li>
       <li>We do not share one user's speeches with another account. Every database query is scoped to the signed-in user.</li>
-      <li>We do not accept file uploads in this MVP. Only pasted text is accepted.</li>
+      <li>We do not accept file uploads. Only pasted text is accepted.</li>
     </ul>
 
     <h2>4. Cookies</h2>
@@ -44,7 +43,7 @@
     <p>Your cases, speeches, versions, analyses and findings remain until you delete them. Deleting a case removes its speeches and analyses through database cascades. Deleting your account permanently removes your user record, sessions, cases, speeches, versions, analyses, findings and argument-graph data. Deletion is immediate and cannot be undone.</p>
 
     <h2>6. Security</h2>
-    <p>The application uses bcrypt password hashing, server-side sessions, CSRF protection, a restrictive Content-Security-Policy, rate limiting, request-size limits and parameterised SQL. No system is perfectly secure; the repository's SECURITY.md lists reviews still required before public deployment.</p>
+    <p>The application uses bcrypt password hashing, server-side sessions, CSRF protection, a restrictive Content-Security-Policy, rate limiting, request-size limits, and prepared SQL statements. No system is perfectly secure. Get an independent security review before a public launch.</p>
 
     <h2>7. Children</h2>
     <p>The service is intended for competitive debaters and coaches. It is not directed at children under 13, and accounts should not be created for them.</p>

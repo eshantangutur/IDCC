@@ -31,7 +31,7 @@ async function main() {
   const shell = await mountShell({
     page: 'history',
     title: 'Analysis report',
-    subtitle: 'Reconstruction, findings and argument map',
+    subtitle: 'Summary, findings, and argument map',
     actionsHtml: '<a class="btn btn-ghost btn-sm" href="/history.html">All analyses</a>',
   });
   if (!shell) return;
@@ -63,12 +63,12 @@ function render(analysis, shell) {
   const nodes = Array.isArray(result.nodes) ? result.nodes : [];
   const edges = Array.isArray(result.edges) ? result.edges : [];
 
-  document.title = `${formatSpec?.abbreviation || analysis.format} report — Argument Forensics`;
+  document.title = `${formatSpec?.abbreviation || analysis.format} report | Argument Forensics`;
 
   const comparisonCard = analysis.comparison
     ? `<div class="card">
         <div class="card-title" style="margin-bottom:10px">${icons.refresh} Compared with the previous analysis</div>
-        <p class="small muted">${analysis.comparison.resolvedCount} finding${analysis.comparison.resolvedCount === 1 ? '' : 's'} resolved · ${analysis.comparison.persistentCount} carried over.</p>
+        <p class="small muted">${analysis.comparison.resolvedCount} finding${analysis.comparison.resolvedCount === 1 ? '' : 's'} resolved, ${analysis.comparison.persistentCount} carried over.</p>
         <div class="resolution-list" style="margin-top:10px">
           ${(analysis.comparison.resolved || []).slice(0, 3).map((finding) => `
             <div class="resolution-item resolution-item--resolved">${icons.check}<span>Resolved: ${escapeHtml(finding.title)}</span></div>`).join('')}
@@ -84,7 +84,7 @@ function render(analysis, shell) {
         <a class="btn btn-ghost btn-sm" href="/history.html">${icons.arrowLeft}<span>History</span></a>
         <span class="tiny muted">Report #${analysis.id}</span>
       </div>
-      <span class="eyebrow">${escapeHtml(formatName)} · ${escapeHtml(analysis.speechType)}</span>
+      <span class="small muted">${escapeHtml(formatName)}, ${escapeHtml(analysis.speechType)}</span>
       <h1>${escapeHtml(title)}</h1>
       <div class="report-meta">
         ${formatChip(analysis.format)}
@@ -107,7 +107,7 @@ function render(analysis, shell) {
       <div class="banner">
         ${icons.alert}
         <div>
-          <strong>Read findings as calibrated judgments, not verdicts.</strong>
+          <strong>Read findings as opinions, not verdicts.</strong>
           Each weakness cites the passage that generated it, and the confidence indicator reflects how directly the text supports the finding.
           A high-confidence finding means the passage is clear, not that the conclusion is objectively true.
         </div>
@@ -117,7 +117,7 @@ function render(analysis, shell) {
     <div class="card" style="margin-top:16px">
       <div class="card-header">
         <div>
-          <span class="eyebrow">Structural summary</span>
+          <span class="small muted">Summary</span>
           <h2 style="font-size:1.15rem;margin-top:4px">${escapeHtml(summary.structureAssessment ? 'How this argument is built' : 'Analysis summary')}</h2>
         </div>
         <div class="summary-grid" style="gap:8px;width:100%;max-width:380px">
@@ -130,12 +130,12 @@ function render(analysis, shell) {
       </div>
       <p style="color:var(--text-soft);font-size:.94rem;max-width:100ch">${escapeHtml(summary.overview || 'No summary was produced for this analysis.')}</p>
       <div class="grid-2" style="margin-top:16px">
-        ${summary.structureAssessment ? `<div><span class="eyebrow">Structure</span><p class="small muted" style="margin-top:6px">${escapeHtml(summary.structureAssessment)}</p></div>` : ''}
-        ${summary.weighingSummary ? `<div><span class="eyebrow">Weighing</span><p class="small muted" style="margin-top:6px">${escapeHtml(summary.weighingSummary)}</p></div>` : ''}
+        ${summary.structureAssessment ? `<div><span class="small muted">Structure</span><p class="small muted" style="margin-top:6px">${escapeHtml(summary.structureAssessment)}</p></div>` : ''}
+        ${summary.weighingSummary ? `<div><span class="small muted">Weighing</span><p class="small muted" style="margin-top:6px">${escapeHtml(summary.weighingSummary)}</p></div>` : ''}
       </div>
       ${Array.isArray(summary.strongComponents) && summary.strongComponents.length ? `
         <div style="margin-top:16px">
-          <span class="eyebrow">What is working</span>
+          <span class="small muted">What is working</span>
           <div class="focus-list" style="margin-top:8px">
             ${summary.strongComponents.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}
           </div>
@@ -154,7 +154,7 @@ function render(analysis, shell) {
         <div class="workspace__col">
           <div class="workspace__head">
             <div>
-              <span class="eyebrow">Speech</span>
+              <span class="small muted">Speech</span>
               <span class="tiny muted mono" style="margin-left:8px">${analysis.content.length} chars</span>
             </div>
             <button type="button" class="btn btn-ghost btn-sm" id="copySpeechButton">Copy</button>
@@ -166,7 +166,7 @@ function render(analysis, shell) {
 
         <div class="workspace__col">
           <div class="workspace__head">
-            <span class="eyebrow">Findings</span>
+            <span class="small muted">Findings</span>
             <span class="chip">${findings.length}</span>
           </div>
           <div class="workspace__body" style="padding-bottom:0">
@@ -185,8 +185,8 @@ function render(analysis, shell) {
 
         <div class="workspace__col workspace__col--map workspace__map" id="workspaceMap">
           <div class="workspace__head">
-            <span class="eyebrow">Argument map</span>
-            <span class="chip">${nodes.length} nodes · ${edges.length} links</span>
+            <span class="small muted">Argument map</span>
+            <span class="chip">${nodes.length} nodes, ${edges.length} links</span>
           </div>
           <div class="map-toolbar">
             <div class="map-legend" id="mapLegend"></div>
@@ -201,7 +201,7 @@ function render(analysis, shell) {
           </div>
           <div class="row map-filters" id="mapFilters"></div>
           <aside class="map-detail" id="mapDetail">
-            <span class="eyebrow">Inspector</span>
+            <span class="small muted">Inspector</span>
             <h3 style="margin-top:6px">Select a node</h3>
             <p class="small muted" style="margin-top:6px">Click any node to read the exact sentence and the model's explanation. Click an edge to inspect the relationship and whether the speech actually warrants it.</p>
             <div class="map-detail__row"><span>Nodes</span><span>${nodes.length}</span></div>
@@ -224,7 +224,7 @@ function render(analysis, shell) {
       ${renderFormatSpecific(result.formatSpecific)}
     </section>`;
 
-  document.title = `${formatName} report — Argument Forensics`;
+  document.title = `${formatName} report | Argument Forensics`;
 
   // ---------------- findings ----------------
   const findingsList = document.getElementById('findingsList');
@@ -266,7 +266,7 @@ function render(analysis, shell) {
     });
     if (passagePanel) {
       passagePanel.innerHTML = finding.passage
-        ? `<blockquote class="finding__passage" style="display:block;margin:0">“${escapeHtml(finding.passage)}”</blockquote>`
+        ? `<blockquote class="finding__passage" style="display:block;margin:0">"${escapeHtml(finding.passage)}"</blockquote>`
         : '<span class="muted">No verbatim passage was returned for this finding.</span>';
       passageHint.textContent = finding.confidence
         ? `Confidence: ${finding.confidence}. The passage is highlighted in the speech column.`
@@ -356,7 +356,7 @@ function render(analysis, shell) {
         if (selection.kind === 'edge') {
           const { from, to, relation, explanation, supported } = selection;
           detail.innerHTML = `
-            <span class="eyebrow">Relationship</span>
+            <span class="small muted">Relationship</span>
             <h3 style="margin-top:6px">${escapeHtml(relation)} ${supported ? '' : '· unsupported'}</h3>
             <div class="stack-sm" style="margin-top:10px">
               <div class="map-detail__row"><span>From</span><span>${escapeHtml(from?.label || 'unknown')}</span></div>
@@ -364,7 +364,7 @@ function render(analysis, shell) {
               <div class="map-detail__row"><span>Warranted</span><span style="color:${supported ? 'var(--strength)' : 'var(--critical)'}">${supported ? 'yes' : 'no'}</span></div>
             </div>
             ${explanation ? `<p class="small" style="margin-top:10px;color:var(--text-soft)">${escapeHtml(explanation)}</p>` : ''}
-            ${!supported ? '<p class="tiny" style="margin-top:8px;color:#fca5a5">The speech asserts this connection without supplying a warrant. This is a structural vulnerability.</p>' : ''}`;
+            ${!supported ? '<p class="tiny" style="margin-top:8px;color:#fca5a5">The speech asserts this connection without showing why it is true.</p>' : ''}`;
           return;
         }
 
@@ -373,7 +373,7 @@ function render(analysis, shell) {
         const outgoing = edges.filter((edge) => edge.from === node.id);
         const relatedFinding = findings.findIndex((finding) => finding.nodeId === node.id);
         detail.innerHTML = `
-          <span class="eyebrow" style="color:${TYPE_COLORS[node.type] || 'var(--muted)'}">${escapeHtml(TYPE_LABELS_EXPORT[node.type] || node.type)}</span>
+          <span class="small muted" style="color:${TYPE_COLORS[node.type] || 'var(--muted)'}">${escapeHtml(TYPE_LABELS_EXPORT[node.type] || node.type)}</span>
           <h3 style="margin-top:6px">${escapeHtml(node.label)}</h3>
           ${node.excerpt ? `<p class="map-detail__excerpt">${escapeHtml(node.excerpt)}</p>` : ''}
           ${node.detail ? `<p class="small" style="color:var(--text-soft)">${escapeHtml(node.detail)}</p>` : ''}
@@ -464,7 +464,7 @@ function renderFinding(finding, index) {
       </div>
       ${finding.nodeId ? `<button type="button" class="btn btn-ghost btn-sm" data-goto-map title="Highlight this node in the argument map">${icons.map}<span>Map node</span></button>` : ''}
     </div>
-    ${finding.passage ? `<blockquote class="finding__passage">“${escapeHtml(finding.passage)}”</blockquote>` : ''}
+    ${finding.passage ? `<blockquote class="finding__passage">"${escapeHtml(finding.passage)}"</blockquote>` : ''}
     <p class="finding__detail">${escapeHtml(finding.explanation)}</p>
     <dl class="finding__grid">
       ${finding.whyItMatters ? `<div class="finding__row"><dt>Why it matters</dt><dd>${escapeHtml(finding.whyItMatters)}</dd></div>` : ''}
@@ -497,7 +497,7 @@ function componentSection(title, typeLabel, items, { emptyText = 'None were iden
             ${item.strength ? `<span class="chip">${escapeHtml(item.strength)}</span>` : ''}
           </div>
           <p class="component-item__text">${escapeHtml(item.text || '')}</p>
-          ${item.excerpt && item.excerpt !== item.text ? `<p class="component-item__excerpt">“${escapeHtml(item.excerpt)}”</p>` : ''}
+          ${item.excerpt && item.excerpt !== item.text ? `<p class="component-item__excerpt">"${escapeHtml(item.excerpt)}"</p>` : ''}
           ${item.note ? `<p class="tiny muted">${escapeHtml(item.note)}</p>` : ''}
         </div>`).join('')}</div>`
       : `<p class="small muted">${escapeHtml(emptyText)}</p>`}
@@ -526,13 +526,13 @@ function renderStructure(structure) {
     ${listSection('Logical relationships', Array.isArray(structure.relationships) ? structure.relationships : [], (entry) => `
       <div class="component-item">
         <p class="component-item__text">${escapeHtml(entry.description)}</p>
-        <p class="tiny muted">${escapeHtml(entry.from)} → ${escapeHtml(entry.to)}</p>
+        <p class="tiny muted">${escapeHtml(entry.from)} to ${escapeHtml(entry.to)}</p>
       </div>`)}
     ${listSection('Potential contradictions', Array.isArray(structure.contradictions) ? structure.contradictions : [], (entry) => `
       <div class="component-item">
         <div class="component-item__head"><span class="chip chip-${escapeHtml(entry.severity || 'moderate')}">${escapeHtml(entry.severity || 'moderate')}</span></div>
         <p class="component-item__text">${escapeHtml(entry.title)}</p>
-        ${(entry.passages || []).map((passage) => `<p class="component-item__excerpt">“${escapeHtml(passage)}”</p>`).join('')}
+        ${(entry.passages || []).map((passage) => `<p class="component-item__excerpt">"${escapeHtml(passage)}"</p>`).join('')}
         <p class="tiny muted">${escapeHtml(entry.explanation)}</p>
       </div>`)}
     ${listSection('Unsupported assertions', Array.isArray(structure.unsupportedAssertions) ? structure.unsupportedAssertions : [], (entry) => `
@@ -567,7 +567,7 @@ function renderRubric(rubric, formatSpec) {
     <div class="card-header">
       <div>
         <div class="card-title">${icons.scale} ${escapeHtml(formatSpec?.name || 'Format')} rubric</div>
-        <p class="small muted" style="margin-top:6px">${escapeHtml(rubric.scale || '5-point analytical rubric')} · each dimension is defined and scored independently.</p>
+        <p class="small muted" style="margin-top:6px">${escapeHtml(rubric.scale || '5-point analytical rubric')}, each dimension is defined and scored independently.</p>
       </div>
       <span class="chip">${rubric.scored ?? 0}/${rubric.dimensions.length} scored</span>
     </div>
@@ -588,9 +588,9 @@ function renderRubric(rubric, formatSpec) {
     </div>
     <div class="panel-note" style="margin-top:16px">${escapeHtml(rubric.caution || '')}</div>
     ${rubric.scaleDefinitions ? `<div style="margin-top:16px">
-      <span class="eyebrow">Scale definitions</span>
+      <span class="small muted">Scale definitions</span>
       <div class="stack-sm" style="margin-top:8px">
-        ${Object.entries(rubric.scaleDefinitions).map(([score, definition]) => `<p class="tiny muted"><strong style="color:var(--text-soft)">${escapeHtml(score)}</strong> — ${escapeHtml(definition)}</p>`).join('')}
+        ${Object.entries(rubric.scaleDefinitions).map(([score, definition]) => `<p class="tiny muted"><strong style="color:var(--text-soft)">${escapeHtml(score)}</strong>: ${escapeHtml(definition)}</p>`).join('')}
       </div>
     </div>` : ''}
   </div>`;
@@ -604,7 +604,7 @@ function chainNode(label, value) {
   const missing = isMissing(value);
   return `<div class="chain__node ${missing ? 'is-missing' : ''}">
     <b>${escapeHtml(label)}</b>
-    <span>${escapeHtml(Array.isArray(value) ? (value.length ? value.join(' · ') : 'Missing') : value || 'Missing')}</span>
+    <span>${escapeHtml(Array.isArray(value) ? (value.length ? value.join(', ') : 'Missing') : value || 'Missing')}</span>
   </div>`;
 }
 
@@ -627,17 +627,17 @@ function renderFormatSpecific(formatSpecific) {
         ${[['Magnitude', data.magnitude], ['Probability', data.probability], ['Timeframe', data.timeframe], ['Comparative framing', data.comparativeFraming]].map(([title, value]) => `
           <div class="component-item">
             <div class="component-item__head">
-              <span class="eyebrow">${escapeHtml(title)}</span>
+              <span class="small muted">${escapeHtml(title)}</span>
               ${isMissing(value) ? '<span class="chip chip-critical">Not addressed</span>' : '<span class="chip chip-strength">Addressed</span>'}
             </div>
             <p class="component-item__text">${escapeHtml(value || 'Not addressed in this speech.')}</p>
           </div>`).join('')}
       </div>
       <div style="margin-top:16px">
-        <span class="eyebrow">Dropped arguments</span>
+        <span class="small muted">Dropped arguments</span>
         ${Array.isArray(data.droppedArguments) && data.droppedArguments.length
           ? `<ul class="stack-sm" style="margin:8px 0 0;padding-left:20px;color:var(--text-soft);font-size:.86rem">${data.droppedArguments.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
-          : '<p class="small muted" style="margin-top:6px">No dropped arguments were identified from this artifact.</p>'}
+          : '<p class="small muted" style="margin-top:6px">No dropped arguments were found in this speech.</p>'}
       </div>
     </div>`;
   }
@@ -660,23 +660,23 @@ function renderFormatSpecific(formatSpecific) {
       </div>
       <div class="grid-2">
         <div class="component-item">
-          <span class="eyebrow">Value</span>
+          <span class="small muted">Value</span>
           <p class="component-item__text">${escapeHtml(data.value)}</p>
         </div>
         <div class="component-item">
-          <span class="eyebrow">Criterion</span>
+          <span class="small muted">Criterion</span>
           <p class="component-item__text">${escapeHtml(data.criterion)}</p>
         </div>
       </div>
       ${data.notes ? `<p class="small" style="margin-top:14px;color:var(--text-soft)">${escapeHtml(data.notes)}</p>` : ''}
       <div style="margin-top:14px">
-        <span class="eyebrow">Framework tensions</span>
+        <span class="small muted">Framework tensions</span>
         ${Array.isArray(data.tensions) && data.tensions.length
           ? `<div class="stack-sm" style="margin-top:8px">${data.tensions.map((tension) => `<div class="resolution-item resolution-item--open">${icons.alert}<span>${escapeHtml(tension)}</span></div>`).join('')}</div>`
           : '<p class="small muted" style="margin-top:6px">No explicit tensions were identified.</p>'}
       </div>
       <div style="margin-top:14px">
-        <span class="eyebrow">Framework interaction</span>
+        <span class="small muted">Framework interaction</span>
         <p class="small muted" style="margin-top:6px">${escapeHtml(data.frameworkInteraction || 'Not addressed in this speech.')}</p>
       </div>
     </div>`;
@@ -745,14 +745,14 @@ function renderFormatSpecific(formatSpecific) {
         ${provisions.length ? `<div class="stack">${provisions.map((provision) => `
           <div class="component-item">
             <div class="component-item__head">
-              <span class="eyebrow">Provision</span>
+              <span class="small muted">Provision</span>
             </div>
             <p class="component-item__text">${escapeHtml(provision.text)}</p>
             <div class="grid-2" style="margin-top:6px">
-              <div><span class="tiny muted">Interpretation</span><p class="small" style="color:var(--text-soft)">${escapeHtml(provision.interpretation || '—')}</p></div>
-              <div><span class="tiny muted">Strongest affirmative use</span><p class="small" style="color:var(--text-soft)">${escapeHtml(provision.support || '—')}</p></div>
+              <div><span class="tiny muted">Interpretation</span><p class="small" style="color:var(--text-soft)">${escapeHtml(provision.interpretation || 'Not set')}</p></div>
+              <div><span class="tiny muted">Strongest affirmative use</span><p class="small" style="color:var(--text-soft)">${escapeHtml(provision.support || 'Not set')}</p></div>
             </div>
-            <div><span class="tiny muted">Strongest legislative objection</span><p class="small" style="color:var(--text-soft)">${escapeHtml(provision.attack || '—')}</p></div>
+            <div><span class="tiny muted">Strongest legislative objection</span><p class="small" style="color:var(--text-soft)">${escapeHtml(provision.attack || 'Not set')}</p></div>
           </div>`).join('')}</div>` : '<p class="small muted">No legislative provisions were identified in this speech.</p>'}
       </div>
       <div class="grid-2">
@@ -789,7 +789,7 @@ function renderFormatSpecific(formatSpecific) {
         <div class="card">
           <div class="card-header"><div class="card-title">${icons.alert} Contradictions</div><span class="chip">${contradictions.length}</span></div>
           ${contradictions.length ? `<div class="stack-sm">${contradictions.map((entry) => `
-            <div class="resolution-item resolution-item--open">${icons.alert}<span><strong>${escapeHtml(entry.between)}</strong> — ${escapeHtml(entry.description)} <em>(${escapeHtml(entry.severity)})</em></span></div>`).join('')}</div>`
+            <div class="resolution-item resolution-item--open">${icons.alert}<span><strong>${escapeHtml(entry.between)}</strong>: ${escapeHtml(entry.description)} <em>(${escapeHtml(entry.severity)})</em></span></div>`).join('')}</div>`
             : '<p class="small muted">No contradictions were identified in this single speech. Team consistency across speakers requires analysing each speech separately.</p>'}
         </div>
         <div class="card">

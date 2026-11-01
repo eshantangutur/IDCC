@@ -64,10 +64,10 @@ async function redirectIfSignedIn() {
         markInvalid(form.password, !password);
         return showError('Enter your email address and password.');
       }
-      setButtonLoading(submitButton, true, 'Signing in…');
+      setButtonLoading(submitButton, true, 'Signing in...');
       try {
         await api.post('/api/auth/login', { email, password });
-        toast('Signed in. Opening your workspace…', 'success', { duration: 2000 });
+        toast('Signed in. Opening your workspace...', 'success', { duration: 2000 });
         window.location.replace(nextTarget);
       } catch (error) {
         setButtonLoading(submitButton, false);
@@ -107,10 +107,10 @@ async function redirectIfSignedIn() {
       );
     }
 
-    setButtonLoading(submitButton, true, 'Creating account…');
+    setButtonLoading(submitButton, true, 'Creating account...');
     try {
       await api.post('/api/auth/register', { email, password, displayName: displayName || null });
-      toast('Account created. Welcome to Argument Forensics.', 'success', { duration: 2500 });
+      toast('Account created.', 'success', { duration: 2500 });
       window.location.replace(nextTarget);
     } catch (error) {
       setButtonLoading(submitButton, false);

@@ -16,7 +16,7 @@ import { mountShell } from './shell.js';
 const shell = await mountShell({
   page: 'history',
   title: 'Analysis history',
-  subtitle: 'Every report in your archive',
+  subtitle: 'All your reports',
   actionsHtml: '<a class="btn btn-primary btn-sm" href="/analyzer.html">New analysis</a>',
 });
 
@@ -60,10 +60,10 @@ if (shell) {
     if (!entries.length) {
       const filtered = searchInput.value.trim() || formatFilter.value;
       body.innerHTML = emptyState({
-        title: filtered ? 'No reports match your filters' : 'No analyses yet',
+        title: filtered ? 'No reports match your filters' : 'No reports yet',
         message: filtered
           ? 'Try a different search term or clear the format filter.'
-          : 'Analyse your first speech to build a history of reports, findings and revisions.',
+          : 'Analyze your first speech to start your history.',
         action: filtered
           ? '<button type="button" class="btn btn-secondary btn-sm" data-clear>Clear filters</button>'
           : '<a class="btn btn-primary btn-sm" href="/analyzer.html">Start a new analysis</a>',
@@ -83,7 +83,7 @@ if (shell) {
             <th>Report</th>
             <th>Format</th>
             <th>Findings</th>
-            <th>Analysed</th>
+            <th>Date</th>
             <th>Mode</th>
             <th aria-label="Actions"></th>
           </tr>
@@ -99,11 +99,11 @@ if (shell) {
               </td>
               <td>
                 ${formatChip(entry.format)}
-                <div class="tiny muted" style="margin-top:4px">${escapeHtml(entry.speechType)}${entry.side ? ` · ${escapeHtml(SIDE_LABELS[entry.side] || entry.side)}` : ''}</div>
+                <div class="tiny muted" style="margin-top:4px">${escapeHtml(entry.speechType)}${entry.side ? `, ${escapeHtml(SIDE_LABELS[entry.side] || entry.side)}` : ''}</div>
               </td>
               <td>
                 <span class="chip ${critical ? 'chip-critical' : 'chip-strength'}">${critical} critical</span>
-                <div class="tiny muted" style="margin-top:4px">${counts.findings || 0} total · ${counts.strengths || 0} strengths</div>
+                <div class="tiny muted" style="margin-top:4px">${counts.findings || 0} total, ${counts.strengths || 0} strengths</div>
               </td>
               <td>
                 <span class="small">${escapeHtml(formatDate(entry.createdAt))}</span>
@@ -127,7 +127,7 @@ if (shell) {
         const id = Number(button.dataset.delete);
         const confirmed = await confirmDialog({
           title: 'Delete this report?',
-          message: 'The analysis, its findings and its argument graph will be permanently deleted. The speech itself and its other versions are kept.',
+          message: 'The report, its findings, and its argument map will be deleted. The speech and its other versions are kept.',
           confirmLabel: 'Delete report',
           danger: true,
         });

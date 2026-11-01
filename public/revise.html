@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Revision workspace — Argument Forensics</title>
+  <title>Revise speech | Argument Forensics</title>
   <meta name="color-scheme" content="dark light">
   <script src="/js/theme-init.js"></script>
   <link rel="stylesheet" href="/css/styles.css">
@@ -17,9 +17,8 @@
       <main class="page">
         <div class="page-header">
           <div>
-            <span class="eyebrow">Revision workspace</span>
-            <h1 id="speechTitle">Loading speech…</h1>
-            <p id="speechMeta">Compare the original against a revision, then re-run the analysis.</p>
+            <h1 id="speechTitle">Loading speech...</h1>
+            <p id="speechMeta">Compare the original with a new version, then run the analysis again.</p>
           </div>
           <div class="row" id="headerActions"></div>
         </div>
@@ -65,17 +64,17 @@
               <input class="input" id="versionLabel" type="text" maxlength="120" placeholder="e.g. Added weighing paragraph">
             </div>
           </div>
-          <p class="tiny muted" style="margin-top:10px">Saving stores the current revised text as a new immutable version. Re-running the analysis creates another version only when the text has changed.</p>
+          <p class="tiny muted" style="margin-top:10px">Saving stores the current text as a new version. Running the analysis again creates another version only when the text has changed.</p>
         </div>
 
         <div class="grid-2" style="margin-top:20px">
           <section class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">Highlighted modifications</div>
+                <div class="card-title">Changes</div>
                 <p class="tiny muted" style="margin-top:4px">Word-level comparison of the baseline and the revised text.</p>
               </div>
-              <span class="chip" id="diffStats">—</span>
+              <span class="chip" id="diffStats">Loading</span>
             </div>
             <div id="diffPanel" class="diff-view"></div>
           </section>
@@ -83,10 +82,10 @@
           <section class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">Weakness tracking</div>
+                <div class="card-title">Open findings</div>
                 <p class="tiny muted" style="margin-top:4px">Findings from the most recent report on this speech.</p>
               </div>
-              <span class="chip" id="trackingCount">—</span>
+              <span class="chip" id="trackingCount">Loading</span>
             </div>
             <div id="trackingPanel"></div>
           </section>
@@ -94,7 +93,7 @@
 
         <section class="card" style="margin-top:20px">
           <div class="card-header">
-            <div class="card-title">Version history &amp; reports</div>
+            <div class="card-title">Versions and reports</div>
             <span class="chip" id="versionCount">0</span>
           </div>
           <div class="version-list" id="versionList"></div>

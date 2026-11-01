@@ -19,7 +19,7 @@ const speechId = Number(param('id'));
 const shell = await mountShell({
   page: 'history',
   title: 'Revision workspace',
-  subtitle: 'Compare versions and re-analyse',
+  subtitle: 'Compare versions and run the report again',
   actionsHtml: '<a class="btn btn-ghost btn-sm" href="/history.html">History</a>',
 });
 
@@ -28,7 +28,7 @@ if (shell) {
 
   if (!Number.isInteger(speechId) || speechId <= 0) {
     document.getElementById('speechTitle').textContent = 'Speech not specified';
-    document.getElementById('noticeSlot').innerHTML = '<div class="banner banner--error">No speech id was provided. Open a report and choose “Revise speech”.</div>';
+    document.getElementById('noticeSlot').innerHTML = '<div class="banner banner--error">No speech was selected. Open a report and choose Revise speech.</div>';
   } else {
     const originalEditor = document.getElementById('originalEditor');
     const revisedEditor = document.getElementById('revisedEditor');
@@ -63,19 +63,19 @@ if (shell) {
         return;
       }
       const stats = renderDiffPanel(diffPanel, baseline.content, revisedEditor.value);
-      diffStats.textContent = `+${stats.added} / −${stats.removed} words`;
+      diffStats.textContent = `+${stats.added} / -${stats.removed} words`;
     }
 
     const updateDiffDebounced = debounce(updateDiff, 220);
 
     function fillBaselineOptions() {
       baselineSelect.innerHTML = versions
-        .map((entry) => `<option value="${entry.version}" ${entry.version === baselineVersion ? 'selected' : ''}>Version ${entry.version}${entry.label ? ` · ${escapeHtml(entry.label)}` : ''}</option>`)
+        .map((entry) => `<option value="${entry.version}" ${entry.version === baselineVersion ? 'selected' : ''}>Version ${entry.version}${entry.label ? `, ${escapeHtml(entry.label)}` : ''}</option>`)
         .join('');
       const baseline = versions.find((entry) => entry.version === baselineVersion);
       if (baseline) {
         originalEditor.value = baseline.content;
-        document.getElementById('originalMeta').textContent = `${baseline.wordCount} words · ${formatDate(baseline.createdAt, { time: false })}`;
+        document.getElementById('originalMeta').textContent = `${baseline.wordCount} words, ${formatDate(baseline.createdAt, { time: false })}`;
       }
     }
 
@@ -105,14 +105,14 @@ if (shell) {
 
       const analysisLinks = document.getElementById('analysisLinks');
       analysisLinks.innerHTML = analyses.length
-        ? `<span class="eyebrow">Reports on this speech</span>
+        ? `<span class="small muted">Reports on this speech</span>
            <div class="stack-sm" style="margin-top:8px">
              ${analyses.map((entry) => `<a class="list__item" href="/report.html?id=${entry.id}" style="padding:8px 0">
                <div class="list__main">
-                 <div class="list__title">Report #${entry.id} · ${escapeHtml(entry.speechType)}</div>
+                 <div class="list__title">Report #${entry.id}, ${escapeHtml(entry.speechType)}</div>
                  <div class="list__meta"><span>${escapeHtml(formatDate(entry.createdAt))}</span>${entry.isDemo ? '<span class="chip chip-demo">Demo</span>' : ''}</div>
                </div>
-               <div class="list__side">Open →</div>
+               <div class="list__side">Open</div>
              </a>`).join('')}
            </div>`
         : '';
@@ -137,14 +137,14 @@ if (shell) {
         if (comparison) {
           const resolved = comparison.resolved || [];
           const persistent = comparison.persistent || [];
-          document.getElementById('trackingCount').textContent = `${resolved.length} resolved · ${persistent.length} open`;
+          document.getElementById('trackingCount').textContent = `${resolved.length} resolved, ${persistent.length} open`;
           trackingPanel.innerHTML = `
             <div class="resolution-list">
               ${resolved.slice(0, 5).map((finding) => `<div class="resolution-item resolution-item--resolved">${icons.check}<span><strong>Resolved:</strong> ${escapeHtml(finding.title)}</span></div>`).join('')}
               ${persistent.slice(0, 6).map((finding) => `<div class="resolution-item resolution-item--open">${icons.alert}<span><strong>Still open:</strong> ${escapeHtml(finding.title)}</span></div>`).join('')}
             </div>
-            ${resolved.length === 0 && persistent.length === 0 ? '<p class="small muted" style="margin-top:10px">No tracked findings were carried across this comparison.</p>' : ''}
-            <p class="tiny muted" style="margin-top:12px">Comparison against report #${comparison.previousAnalysisId}. Findings count as resolved when their passage no longer appears in the revised text.</p>
+            ${resolved.length === 0 && persistent.length === 0 ? '<p class="small muted" style="margin-top:10px">No findings carried over from the previous report.</p>' : ''}
+            <p class="tiny muted" style="margin-top:12px">Compared with report #${comparison.previousAnalysisId}. A finding is resolved when its passage is no longer in the revised text.</p>
             <a class="btn btn-secondary btn-sm" style="margin-top:12px" href="/report.html?id=${analysis.id}">Open latest report</a>`;
           return;
         }
@@ -153,10 +153,10 @@ if (shell) {
         document.getElementById('trackingCount').textContent = `${open.length} open`;
         trackingPanel.innerHTML = `
           <div class="resolution-list">
-            ${open.slice(0, 8).map((finding) => `<div class="resolution-item resolution-item--open">${icons.alert}<span><strong>${escapeHtml(finding.title)}</strong><br><span class="tiny muted">${escapeHtml(finding.weaknessType)} · ${escapeHtml(finding.confidence)} confidence</span></span></div>`).join('')}
+            ${open.slice(0, 8).map((finding) => `<div class="resolution-item resolution-item--open">${icons.alert}<span><strong>${escapeHtml(finding.title)}</strong><br><span class="tiny muted">${escapeHtml(finding.weaknessType)}, ${escapeHtml(finding.confidence)} confidence</span></span></div>`).join('')}
           </div>
           ${open.length === 0 ? '<p class="small muted">The latest report found no open weaknesses.</p>' : ''}
-          <p class="tiny muted" style="margin-top:12px">This report is not yet a revision, so nothing can be marked resolved. Re-run the analysis on an edited text to enable tracking.</p>
+          <p class="tiny muted" style="margin-top:12px">This report is not a revision yet, so nothing can be marked resolved. Edit the text and run the report again to track changes.</p>
           <a class="btn btn-secondary btn-sm" style="margin-top:12px" href="/report.html?id=${analysis.id}">Open latest report</a>`;
       } catch (error) {
         trackingPanel.innerHTML = `<div class="banner banner--error">${icons.alert}<span>${escapeHtml(error.message || 'Could not load weakness tracking.')}</span></div>`;
@@ -172,7 +172,7 @@ if (shell) {
       analyses = speechData.analyses;
       versions = versionsData.versions;
 
-      document.title = `${speech.title} — Revision workspace`;
+      document.title = `${speech.title} | Revise`;
       document.getElementById('speechTitle').textContent = speech.title;
       document.getElementById('speechMeta').innerHTML =
         `${formatChip(speech.format)} <span class="chip">${escapeHtml(SIDE_LABELS[speech.side] || speech.side)}</span>
@@ -218,13 +218,13 @@ if (shell) {
         return;
       }
       busy = true;
-      setButtonLoading(saveButton, true, 'Saving…');
+      setButtonLoading(saveButton, true, 'Saving...');
       try {
         const result = await api.post(`/api/speeches/${speechId}/versions`, {
           content,
           label: versionLabel.value.trim() || null,
         });
-        toast(result.created ? `Version ${result.version.version} saved.` : 'This text matches the latest version — nothing new was saved.', result.created ? 'success' : 'info');
+        toast(result.created ? `Version ${result.version.version} saved.` : 'This text matches the latest version. Nothing new was saved.', result.created ? 'success' : 'info');
         await loadSpeech();
       } catch (error) {
         toast(error.message || 'Could not save the version.', 'error');
@@ -242,7 +242,7 @@ if (shell) {
         return;
       }
       busy = true;
-      setButtonLoading(reanalyzeButton, true, 'Analysing…');
+      setButtonLoading(reanalyzeButton, true, 'Running report...');
       try {
         const result = await api.post('/api/analyze', {
           format: speech.format,

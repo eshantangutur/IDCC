@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard — Argument Forensics</title>
+  <title>Dashboard | Argument Forensics</title>
   <meta name="color-scheme" content="dark light">
   <script src="/js/theme-init.js"></script>
   <link rel="stylesheet" href="/css/styles.css">
@@ -17,9 +17,8 @@
       <main class="page">
         <div class="page-header">
           <div>
-            <span class="eyebrow">Workspace</span>
             <h1 id="welcomeHeading">Welcome back</h1>
-            <p id="welcomeSub">Your analysis history, saved cases and format workspaces.</p>
+            <p id="welcomeSub">Your recent reports, cases, and formats.</p>
           </div>
           <a class="btn btn-primary" href="/analyzer.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
@@ -34,7 +33,7 @@
           <div class="row-between" style="margin-bottom:12px">
             <div>
               <h2>Debate formats</h2>
-              <p class="small muted">Each workspace applies its own rubric and analysis tool.</p>
+              <p class="small muted">Each format uses its own checks.</p>
             </div>
             <a class="btn btn-ghost btn-sm" href="/analyzer.html">Open analyzer</a>
           </div>
@@ -50,7 +49,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
                     Recent analyses
                   </div>
-                  <p class="tiny muted" style="margin-top:4px">Your latest forensic reports.</p>
+                  <p class="tiny muted" style="margin-top:4px">Your latest reports.</p>
                 </div>
                 <a class="btn btn-ghost btn-sm" href="/history.html">View all</a>
               </div>
@@ -64,7 +63,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                     Saved cases
                   </div>
-                  <p class="tiny muted" style="margin-top:4px">Reusable cases with contentions and linked speeches.</p>
+                  <p class="tiny muted" style="margin-top:4px">Cases with contentions and linked speeches.</p>
                 </div>
                 <a class="btn btn-ghost btn-sm" href="/cases.html">Manage cases</a>
               </div>
@@ -74,10 +73,9 @@
 
           <div class="stack">
             <section class="card">
-              <div class="card-header">
-                <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
-                  Analysis activity
+              <div class="card-header"><div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
+                  Reports per day
                 </div>
                 <span class="tiny muted">Last 14 days</span>
               </div>
@@ -89,7 +87,7 @@
               <div class="card-header">
                 <div class="card-title">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                  Finding mix
+                  Findings by type
                 </div>
               </div>
               <div id="findingsMix"></div>

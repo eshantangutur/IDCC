@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Argument Forensics — Dissect Arguments. Expose Weaknesses.</title>
-  <meta name="description" content="Argument Forensics reconstructs the logical structure of competitive debate speeches, maps claims, warrants, evidence and impacts, and reports weaknesses with cited passages.">
+  <title>Argument Forensics | Debate speech analysis</title>
+  <meta name="description" content="Paste a debate speech and get a report on its claims, evidence, reasoning, and impacts. Every finding shows the passage it came from.">
   <meta name="color-scheme" content="dark light">
   <script src="/js/theme-init.js"></script>
   <link rel="stylesheet" href="/css/styles.css">
@@ -18,8 +18,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 13h7v7h-7zM11 7.5h4.5A1.5 1.5 0 0 1 17 9v4"/></svg>
         </span>
         <span>
-          <span class="brand__name">ARGUMENT<br>FORENSICS</span>
-          <span class="brand__tag">Analysis workspace</span>
+          <span class="brand__name">Argument Forensics</span>
+          <span class="brand__tag">Debate speech analysis</span>
         </span>
       </a>
       <nav class="site-nav" id="siteNav" aria-label="Primary">
@@ -42,191 +42,69 @@
 
   <main>
     <section class="hero">
-      <div class="container hero__grid">
-        <div>
-          <div class="hero__badge"><span id="modeDot" class="legend-dot" style="background:#10b981"></span><span id="modeLabel">Forensic argument analysis</span></div>
-          <h1>Reconstruct the logic of a speech. <span class="accent">Find the link that breaks.</span></h1>
-          <p class="hero__lede">
-            Argument Forensics dissects competitive debate arguments into claims, warrants, evidence, impacts and
-            hidden assumptions — then reports the weaknesses an opponent will exploit, with the exact passage that
-            creates them.
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn-primary btn-lg" href="/register.html">Start analysing</a>
-            <a class="btn btn-secondary btn-lg" href="/login.html">Sign in</a>
-          </div>
-          <div class="hero__meta">
-            <div class="hero__stat"><b>5</b><span>Format-specific rubrics</span></div>
-            <div class="hero__stat"><b>10</b><span>Structural components</span></div>
-            <div class="hero__stat"><b>1</b><span>Passage-level citation per finding</span></div>
-          </div>
-        </div>
-        <div class="hero__visual">
-          <div class="hero-map" aria-hidden="true">
-            <div class="hero-map__bar">
-              <span class="hero-map__dot"></span><span class="hero-map__dot"></span><span class="hero-map__dot"></span>
-              <span style="margin-left:8px">Argument structure — illustrative</span>
-            </div>
-            <svg viewBox="0 0 520 360" role="presentation">
-              <defs>
-                <marker id="heroArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(148,163,184,.55)"></path>
-                </marker>
-              </defs>
-              <path d="M118 86 C190 86 190 150 258 150" fill="none" stroke="rgba(34,211,238,.55)" stroke-width="1.5" marker-end="url(#heroArrow)"></path>
-              <path d="M118 210 C190 210 190 166 258 166" fill="none" stroke="rgba(129,140,248,.55)" stroke-width="1.5" marker-end="url(#heroArrow)"></path>
-              <path d="M362 158 C404 158 404 110 444 110" fill="none" stroke="rgba(251,191,36,.6)" stroke-width="1.5" marker-end="url(#heroArrow)"></path>
-              <path d="M258 118 C258 70 150 70 118 70" fill="none" stroke="rgba(192,132,252,.5)" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#heroArrow)"></path>
-              <path d="M118 284 C210 284 210 200 300 176" fill="none" stroke="rgba(248,113,113,.6)" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#heroArrow)"></path>
-
-              <g transform="translate(26,56)">
-                <rect width="164" height="54" rx="9" fill="#0f2a2a" stroke="#10b981" stroke-width="1.1"></rect>
-                <text x="12" y="18" font-size="8" letter-spacing="1.2" fill="#10b981" font-family="Inter, sans-serif">EVIDENCE</text>
-                <text x="12" y="35" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">2024 rail study: 12% fewer</text>
-                <text x="12" y="47" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">vehicle hours</text>
-              </g>
-              <g transform="translate(26,184)">
-                <rect width="164" height="54" rx="9" fill="#1b2033" stroke="#9ca3af" stroke-width="1.1"></rect>
-                <text x="12" y="18" font-size="8" letter-spacing="1.2" fill="#9ca3af" font-family="Inter, sans-serif">WARRANT</text>
-                <text x="12" y="35" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">Riders switch when service</text>
-                <text x="12" y="47" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">frequency rises</text>
-              </g>
-              <g transform="translate(258,126)">
-                <rect width="150" height="58" rx="9" fill="#13263f" stroke="#2563eb" stroke-width="1.2"></rect>
-                <text x="12" y="18" font-size="8" letter-spacing="1.2" fill="#2563eb" font-family="Inter, sans-serif">CLAIM</text>
-                <text x="12" y="35" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">Transit expansion</text>
-                <text x="12" y="48" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">reduces congestion</text>
-              </g>
-              <g transform="translate(444,84)">
-                <rect width="52" height="52" rx="8" fill="#2a1f12" stroke="#d97706" stroke-width="1.1"></rect>
-                <text x="10" y="20" font-size="8" fill="#d97706" font-family="Inter, sans-serif">IMPACT</text>
-                <text x="10" y="36" font-size="10" fill="#f9fafb" font-family="Inter, sans-serif">$120B</text>
-              </g>
-              <g transform="translate(26,252)">
-                <rect width="180" height="54" rx="9" fill="#2b1717" stroke="#dc2626" stroke-width="1.1"></rect>
-                <text x="12" y="18" font-size="8" letter-spacing="1.2" fill="#dc2626" font-family="Inter, sans-serif">COUNTERARGUMENT</text>
-                <text x="12" y="35" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">Fare revenue loss may</text>
-                <text x="12" y="47" font-size="10.5" fill="#f9fafb" font-family="Inter, sans-serif">offset the benefit</text>
-              </g>
-            </svg>
-          </div>
-          <div class="hero-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m20 6-11 11L4 12"/></svg>
-            <span>Every finding cites the passage that creates it.</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="problem">
       <div class="container">
-        <div class="section__head">
-          <span class="eyebrow">The problem</span>
-          <h2>Debaters practise speaking. Almost nobody practises diagnosing.</h2>
-          <p>
-            A case can sound confident and still fail structurally: an evidence card that never proves its claim,
-            a contention that stops before an impact, a value whose criterion contradicts the argument beneath it.
-            Those failures are hard to see in your own writing, and a coach can only give so many flows.
-          </p>
+        <p class="small muted" id="modeLabel">Checking analysis status...</p>
+        <h1>Find the weak parts of a debate speech.</h1>
+        <p class="hero__lede">
+          Paste a speech and get a report on its claims, evidence, reasoning, and impacts.
+          Each finding shows the exact passage it came from, so you can check it yourself.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn-primary btn-lg" href="/register.html">Create an account</a>
+          <a class="btn btn-secondary btn-lg" href="/login.html">Sign in</a>
         </div>
-        <div class="grid-3">
-          <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v18M5 7h14"/><path d="m5 7-3 7h6zM19 7l-3 7h6z"/></svg></div>
-            <h3>Structure is invisible</h3>
-            <p>Claims, warrants and impacts blur together in prose. Without a diagram, a dropped link looks identical to a strong one.</p>
-          </article>
-          <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
-            <h3>Feedback is generic</h3>
-            <p>"Be clearer" and "add evidence" do not tell you which sentence fails, why it fails, or how an opponent answers it.</p>
-          </article>
-          <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 17 9 5 9-5"/></svg></div>
-            <h3>Formats are not interchangeable</h3>
-            <p>Public Forum weighing, LD framework interaction, Policy DA chains and World Schools team consistency require different standards.</p>
-          </article>
-        </div>
+        <p class="small muted" style="margin-top:18px">
+          Works with Public Forum, Lincoln-Douglas, Policy, Congressional, and World Schools debate.
+        </p>
       </div>
     </section>
 
     <section class="section" id="formats">
       <div class="container">
-        <div class="section__head">
-          <span class="eyebrow">Five specialised modules</span>
-          <h2>One workspace per debate format.</h2>
-          <p>Each format carries its own rubric, focus criteria and analysis tool. Argument Forensics never grades an LD speech with Policy stock-issue standards.</p>
-        </div>
-        <div class="grid-5">
-          <a class="format-card" href="/register.html">
-            <span class="format-card__abbr">PF</span>
-            <h4>Public Forum</h4>
-            <p>Contention structure, evidence quality, summary extension, final focus and comparative weighing.</p>
-            <span class="format-card__focus">Weighing: magnitude · probability · timeframe</span>
-          </a>
-          <a class="format-card" href="/register.html">
-            <span class="format-card__abbr">LD</span>
-            <h4>Lincoln-Douglas</h4>
-            <p>Value, criterion, framework consistency, philosophical grounding and framework interaction.</p>
-            <span class="format-card__focus">Framework Consistency Checker</span>
-          </a>
-          <a class="format-card" href="/register.html">
-            <span class="format-card__abbr">POLICY</span>
-            <h4>Policy Debate</h4>
-            <p>Plan, harms, inherency, solvency, uniqueness, links, impact calculus, counterplans, kritiks, topicality.</p>
-            <span class="format-card__focus">Disadvantage Link Chain Analyzer</span>
-          </a>
-          <a class="format-card" href="/register.html">
-            <span class="format-card__abbr">CONGRESS</span>
-            <h4>Congressional Debate</h4>
-            <p>Legislative provisions, evidence integration, floor organisation, questioning and procedure.</p>
-            <span class="format-card__focus">Legislative Argument Analyzer</span>
-          </a>
-          <a class="format-card" href="/register.html">
-            <span class="format-card__abbr">WSD</span>
-            <h4>World Schools</h4>
-            <p>Speaker roles, extension, clash, comparative analysis, repetition and contradictions across the team line.</p>
-            <span class="format-card__focus">Team Argument Consistency Checker</span>
-          </a>
+        <h2>One report for each debate format</h2>
+        <p class="muted" style="max-width:65ch;margin-top:8px">
+          Each format has its own rules. The report uses the right checks for the event you choose.
+        </p>
+        <div class="grid-5" style="margin-top:22px">
+          <article class="format-card">
+            <h3>Public Forum</h3>
+            <p>Two-on-two debate about a current event. Checks contentions, evidence, and weighing.</p>
+          </article>
+          <article class="format-card">
+            <h3>Lincoln-Douglas</h3>
+            <p>One-on-one value debate. Checks the value, criterion, and philosophical reasoning.</p>
+          </article>
+          <article class="format-card">
+            <h3>Policy</h3>
+            <p>Plan-based debate. Checks harms, inherency, solvency, disadvantages, and counterplans.</p>
+          </article>
+          <article class="format-card">
+            <h3>Congressional</h3>
+            <p>Legislative debate. Checks how well the speech explains the bill and answers objections.</p>
+          </article>
+          <article class="format-card">
+            <h3>World Schools</h3>
+            <p>Three-on-three debate. Checks roles, clash, team consistency, and comparative analysis.</p>
+          </article>
         </div>
       </div>
     </section>
 
     <section class="section" id="features">
       <div class="container">
-        <div class="section__head">
-          <span class="eyebrow">Inside the workspace</span>
-          <h2>Built for the work between rounds.</h2>
-        </div>
-        <div class="grid-3">
+        <h2>What the report shows</h2>
+        <div class="grid-3" style="margin-top:22px">
           <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg></div>
-            <h3>Interactive argument map</h3>
-            <p>A live graph of claims, evidence, warrants, impacts, assumptions and counterarguments. Select any node to read the source sentence and the reasoning behind the connection — or the missing link.</p>
+            <h3>Findings with receipts</h3>
+            <p>Every weakness is tied to the sentence that caused it. You can agree, disagree, or rewrite it.</p>
           </article>
           <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
-            <h3>Weakness detection report</h3>
-            <p>Findings organised by critical, moderate, minor, improvement and strength — each with the passage, the reasoning, why it matters, a concrete revision and a confidence indicator.</p>
+            <h3>A map of the argument</h3>
+            <p>See claims, evidence, warrants, impacts, assumptions, and counterarguments, and how they connect.</p>
           </article>
           <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></div>
-            <h3>Revision workspace</h3>
-            <p>Edit a new version beside the original, see a highlighted diff, re-run the analysis and track which weaknesses disappeared — and which survived the rewrite.</p>
-          </article>
-          <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
-            <h3>Case archive</h3>
-            <p>Store resolutions, sides, contentions and every analysed speech version in one place. Search, filter, revisit and re-run any report.</p>
-          </article>
-          <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v18M5 7h14"/><path d="m5 7-3 7h6zM19 7l-3 7h6z"/></svg></div>
-            <h3>Defined rubrics, no invented scores</h3>
-            <p>Five dimensions per format, each with a written definition and a 1–5 scale. No opaque "argument score" is ever generated.</p>
-          </article>
-          <article class="card feature">
-            <div class="feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-            <h3>Private by construction</h3>
-            <p>Server-side sessions, hashed passwords and every query scoped to your account. Your speeches are never shared with another user.</p>
+            <h3>Revisions you can compare</h3>
+            <p>Save a new version, compare it with the original, and run the report again to see what changed.</p>
           </article>
         </div>
       </div>
@@ -234,38 +112,30 @@
 
     <section class="section" id="process">
       <div class="container">
-        <div class="section__head">
-          <span class="eyebrow">The analysis process</span>
-          <h2>Paste a speech. Receive a structure, not a chat reply.</h2>
-          <p>
-            The backend sends your speech to the configured language model with the rubric and vocabulary of your
-            chosen format, then validates the response against a strict schema before anything reaches the screen.
-          </p>
-        </div>
-        <div class="process">
-          <div class="process__item">
-            <h4>Select the standard</h4>
-            <p>Choose one of five formats, your side and the speech type. Each selection changes the rubric and the format-specific tool.</p>
-          </div>
-          <div class="process__item">
-            <h4>Extract the structure</h4>
-            <p>The model returns claims, evidence, warrants, impacts, assumptions, counterarguments, relationships and a node graph.</p>
-          </div>
-          <div class="process__item">
-            <h4>Validate and persist</h4>
-            <p>The server rejects malformed output, normalises every field, and stores findings, nodes and edges against your account.</p>
-          </div>
-          <div class="process__item">
-            <h4>Revise and compare</h4>
-            <p>Rewrite the speech, re-analyse it, and see which findings resolved — with the exact new text as evidence.</p>
-          </div>
-        </div>
-        <div class="banner banner--info" style="margin-top:26px">
+        <h2>How it works</h2>
+        <ol class="stack" style="max-width:70ch;margin-top:18px;padding-left:22px">
+          <li>
+            <strong>Pick the format, side, and speech type.</strong>
+            <p class="muted">The report uses the rules for that event.</p>
+          </li>
+          <li>
+            <strong>Paste the speech.</strong>
+            <p class="muted">No file upload. The text is sent to the analysis provider only when live AI is enabled.</p>
+          </li>
+          <li>
+            <strong>Read the report.</strong>
+            <p class="muted">You get a summary, a list of findings, and a map of the argument. Each finding cites its passage.</p>
+          </li>
+          <li>
+            <strong>Revise and check again.</strong>
+            <p class="muted">Save a new version and compare it with the original. Run the report again when you are ready.</p>
+          </li>
+        </ol>
+        <div class="banner banner--info" style="margin-top:24px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
           <div>
-            <strong>Analyses are judgments, not verdicts.</strong> Argument Forensics separates factual inaccuracy, missing evidence,
-            logical weakness and strategic advice, and attaches a confidence indicator to every finding. A model can be wrong;
-            the cited passage is always shown so you can check it.
+            <strong>The report is a second opinion, not a judge.</strong>
+            It can be wrong. Check every quoted passage before you rely on a finding.
           </div>
         </div>
       </div>
@@ -274,35 +144,33 @@
     <section class="section" id="security">
       <div class="container grid-2">
         <div>
-          <span class="eyebrow">Security &amp; honesty</span>
-          <h2 style="margin-top:8px">A workspace you can put real work into.</h2>
-          <p class="muted" style="margin-top:12px">
-            Passwords are hashed with bcrypt, sessions live in SQLite with HttpOnly SameSite cookies, every
-            state-changing request carries a session-bound CSRF token, and API access is rate limited. AI keys stay
-            in the server environment and are never sent to the browser.
+          <h2>Your account and data</h2>
+          <p class="muted" style="margin-top:10px">
+            Passwords are hashed. Sessions are stored on the server with HttpOnly cookies.
+            Forms use CSRF protection, and API requests are rate limited.
           </p>
-          <p class="muted" style="margin-top:12px">
-            If no AI credentials are configured, the application runs in a clearly labelled demo mode using local
-            structural heuristics. It will never present heuristic output as a model analysis.
+          <p class="muted" style="margin-top:10px">
+            The analysis API key stays on the server. It is never sent to your browser.
+            If no key is configured, the site uses the local demo checker and labels the report as demo output.
           </p>
           <div class="row" style="margin-top:20px">
-            <a class="btn btn-secondary" href="/register.html">Create an account</a>
+            <a class="btn btn-primary" href="/register.html">Create an account</a>
             <a class="btn btn-ghost" href="/login.html">Sign in</a>
           </div>
         </div>
         <div class="card">
-          <div class="card-title" style="margin-bottom:14px">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Security posture
-          </div>
-          <div class="stack-sm security-list">
-            <div class="row" style="gap:9px"><span class="legend-dot" style="background:#10b981"></span><span class="small">bcrypt password hashing with server-side sessions</span></div>
-            <div class="row" style="gap:9px"><span class="legend-dot" style="background:#10b981"></span><span class="small">Per-user ownership checks on every record</span></div>
-            <div class="row" style="gap:9px"><span class="legend-dot" style="background:#10b981"></span><span class="small">Helmet, strict CSP, CSRF, rate limits, request-size caps</span></div>
-            <div class="row" style="gap:9px"><span class="legend-dot" style="background:#10b981"></span><span class="small">Prepared SQL statements only — no string-built queries</span></div>
-            <div class="row" style="gap:9px"><span class="legend-dot" style="background:#d97706"></span><span class="small">No file uploads in this MVP; pasted text only</span></div>
-            <div class="row" style="gap:9px"><span class="legend-dot" style="background:#d97706"></span><span class="small">Independent security review still required before public launch</span></div>
-          </div>
+          <h3>What is protected</h3>
+          <ul class="stack-sm" style="margin:12px 0 0;padding-left:20px;color:var(--text-soft)">
+            <li>Passwords are stored as bcrypt hashes, never as plain text.</li>
+            <li>Each account can only see its own cases, speeches, and reports.</li>
+            <li>Session cookies are HttpOnly and SameSite.</li>
+            <li>Forms use a session-bound CSRF token.</li>
+            <li>SQL queries use bound parameters.</li>
+            <li>No file uploads. Only pasted text is accepted.</li>
+          </ul>
+          <p class="small muted" style="margin-top:14px">
+            This is an application under development. Get an independent security review before a public launch.
+          </p>
         </div>
       </div>
     </section>
@@ -311,11 +179,10 @@
       <div class="container">
         <div class="cta-band">
           <div>
-            <span class="eyebrow">Start with one speech</span>
-            <h2 style="margin-top:8px">Dissect arguments. Expose weaknesses. Strengthen reasoning.</h2>
-            <p class="muted" style="margin-top:8px">Free to run locally. Bring your own AI key for live analysis, or explore the clearly labelled demo mode first.</p>
+            <h2>Try it with one speech</h2>
+            <p class="muted" style="margin-top:8px">Create an account and run a report. No credit card and no file upload.</p>
           </div>
-          <a class="btn btn-primary btn-lg" href="/register.html">Create your workspace</a>
+          <a class="btn btn-primary btn-lg" href="/register.html">Create an account</a>
         </div>
       </div>
     </section>
@@ -329,26 +196,25 @@
             <span class="brand__mark">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4h7v7H4zM13 13h7v7h-7zM11 7.5h4.5A1.5 1.5 0 0 1 17 9v4"/></svg>
             </span>
-            <span><span class="brand__name">ARGUMENT FORENSICS</span></span>
+            <span><span class="brand__name">Argument Forensics</span></span>
           </a>
-          <p>Dissect Arguments. Expose Weaknesses. Strengthen Reasoning.</p>
-          <p style="margin-top:10px">A debate-analysis workspace for competitive debaters.</p>
+          <p>A debate speech analysis tool for debaters and coaches.</p>
         </div>
         <div>
-          <h5>Product</h5>
+          <h3>Product</h3>
           <a href="#formats">Debate formats</a>
           <a href="#features">Features</a>
           <a href="#process">How it works</a>
           <a href="/register.html">Create account</a>
         </div>
         <div>
-          <h5>Account</h5>
+          <h3>Account</h3>
           <a href="/login.html">Sign in</a>
           <a href="/register.html">Register</a>
           <a href="/dashboard.html">Workspace</a>
         </div>
         <div>
-          <h5>Legal &amp; contact</h5>
+          <h3>Legal and contact</h3>
           <a href="/privacy.html">Privacy policy</a>
           <a href="/terms.html">Terms of use</a>
           <a href="mailto:support@argumentforensics.app">support@argumentforensics.app</a>
@@ -357,7 +223,7 @@
       </div>
       <div class="footer-bottom">
         <span>&copy; <span id="year">2026</span> Argument Forensics. All rights reserved.</span>
-        <span>Analyses are AI-assisted judgments, not verified facts.</span>
+        <span>Reports are AI-assisted opinions, not verified facts.</span>
       </div>
     </div>
   </footer>

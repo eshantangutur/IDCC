@@ -64,7 +64,7 @@ export function donut(segments, { size = 148, thickness = 16 } = {}) {
       <circle class="donut-track" cx="${size / 2}" cy="${size / 2}" r="${radius}" stroke-width="${thickness}"></circle>
       ${rings}
       <text class="donut-total" x="50%" y="47%" text-anchor="middle">${total}</text>
-      <text class="donut-label" x="50%" y="60%" text-anchor="middle" letter-spacing="1.4">FINDINGS</text>
+      <text class="donut-label" x="50%" y="60%" text-anchor="middle">Findings</text>
     </svg>
     <div class="stack-sm" style="flex:1;min-width:0">${legend}</div>
   </div>`;

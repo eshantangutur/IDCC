@@ -41,7 +41,7 @@ function wrapLabel(label, maxChars = 20) {
   }
   if (line && lines.length < 2) lines.push(line);
   if (lines.length === 2 && words.join(' ').length > lines.join(' ').length + 2) {
-    lines[1] = `${lines[1].slice(0, Math.max(4, maxChars - 1))}…`;
+    lines[1] = `${lines[1].slice(0, Math.max(4, maxChars - 3))}...`;
   }
   return lines.slice(0, 2);
 }
@@ -152,7 +152,7 @@ export function createArgumentMap(container, { nodes = [], edges = [], onSelectN
     });
 
     const title = createSvgElement('title');
-    title.textContent = `${edge.relation}${edge.supported === false ? ' (unsupported)' : ''}${edge.explanation ? ` — ${edge.explanation}` : ''}`;
+    title.textContent = `${edge.relation}${edge.supported === false ? ' (unsupported)' : ''}${edge.explanation ? `: ${edge.explanation}` : ''}`;
     group.append(hit, pathElement, title);
     group.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -194,7 +194,6 @@ export function createArgumentMap(container, { nodes = [], edges = [], onSelectN
       x: 10,
       y: 16,
       'font-size': 8,
-      'letter-spacing': 1.1,
       fill: TYPE_COLORS[type],
       'font-weight': 600,
     });
@@ -245,7 +244,6 @@ export function createArgumentMap(container, { nodes = [], edges = [], onSelectN
       x: 26 + laneIndex * LANE_GAP,
       y: 74,
       'font-size': 9,
-      'letter-spacing': 1.4,
       fill: TYPE_COLORS[type],
       'font-weight': 600,
     });

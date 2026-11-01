@@ -50,7 +50,7 @@ export const FORMAT_NAMES = {
 export const FORMAT_ABBR = { pf: 'PF', ld: 'LD', policy: 'POLICY', congress: 'CONGRESS', wsd: 'WSD' };
 
 export const CATEGORY_META = {
-  critical: { label: 'Critical', heading: 'Critical weaknesses', hint: 'Load-bearing failures that an opponent can win on directly.' },
+  critical: { label: 'Critical', heading: 'Critical weaknesses', hint: 'Failures an opponent can win on directly.' },
   moderate: { label: 'Moderate', heading: 'Moderate weaknesses', hint: 'Real weaknesses that cost credibility or leave an argument incomplete.' },
   minor: { label: 'Minor', heading: 'Minor weaknesses', hint: 'Small issues worth fixing in the next revision.' },
   improvement: { label: 'Improvement', heading: 'Potential improvements', hint: 'Optional upside, not a flaw in the current speech.' },
@@ -165,9 +165,9 @@ export function loadMeta() {
 }
 
 export function formatDate(value, { time = true } = {}) {
-  if (!value) return '—';
+  if (!value) return 'Not set';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) return 'Not set';
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   if (time) {
     options.hour = 'numeric';
@@ -210,8 +210,8 @@ export function weaknessChip(type) {
 
 export function modeChip(mode) {
   return mode === 'demo'
-    ? '<span class="chip chip-demo">Demo analysis</span>'
-    : '<span class="chip chip-live">Live AI analysis</span>';
+    ? '<span class="chip chip-demo">Demo</span>'
+    : '<span class="chip chip-live">Live AI</span>';
 }
 
 export function formatChip(format) {
@@ -231,7 +231,7 @@ export function emptyState({ title, message, action = '' }) {
   </div>`;
 }
 
-export function setButtonLoading(button, loading, loadingLabel = 'Working…') {
+export function setButtonLoading(button, loading, loadingLabel = 'Working...') {
   if (!button) return;
   if (loading) {
     if (!button.dataset.originalHtml) button.dataset.originalHtml = button.innerHTML;

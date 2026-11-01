@@ -13,7 +13,7 @@ import { mountShell } from './shell.js';
 const shell = await mountShell({
   page: 'settings',
   title: 'Settings',
-  subtitle: 'Account, security and data controls',
+  subtitle: 'Account and data',
 });
 
 if (shell) {
@@ -38,8 +38,8 @@ if (shell) {
   const isDemo = meta.ai.mode === 'demo';
   document.getElementById('aiModeChip').className = `chip ${isDemo ? 'chip-demo' : 'chip-live'}`;
   document.getElementById('aiModeChip').textContent = isDemo ? 'Demo mode' : 'Live AI';
-  document.getElementById('aiMode').textContent = isDemo ? 'Local structural heuristics' : 'Language model';
-  document.getElementById('aiProvider').textContent = meta.ai.provider || '—';
+  document.getElementById('aiMode').textContent = isDemo ? 'Local demo checker' : 'Live AI';
+  document.getElementById('aiProvider').textContent = meta.ai.provider || 'Not set';
   document.getElementById('aiModel').textContent = meta.ai.model || 'Not applicable in demo mode';
   document.getElementById('aiLimit').textContent = `${Number(meta.limits.maxSpeechChars).toLocaleString()} characters per speech`;
   const reasonBox = document.getElementById('aiReason');
@@ -75,7 +75,7 @@ if (shell) {
     if (newPassword !== confirmPassword) return setFeedback('The new passwords do not match.');
     if (newPassword === currentPassword) return setFeedback('Choose a new password that differs from the current one.');
 
-    setButtonLoading(passwordButton, true, 'Updating…');
+    setButtonLoading(passwordButton, true, 'Updating...');
     try {
       await api.post('/api/auth/change-password', { currentPassword, newPassword });
       passwordForm.reset();
@@ -92,7 +92,7 @@ if (shell) {
   document.getElementById('deleteAccountButton').addEventListener('click', () => {
     const confirmedFirst = confirmDialog({
       title: 'Delete your account?',
-      message: 'This permanently deletes every case, speech, version, analysis, finding and argument map in your account. It cannot be undone.',
+      message: 'This deletes every case, speech, version, report, finding, and argument map in your account. It cannot be undone.',
       confirmLabel: 'Continue',
       danger: true,
     }).then((accepted) => {
@@ -100,7 +100,7 @@ if (shell) {
       const dialog = openModal({
         title: 'Confirm account deletion',
         body: `<div class="stack-sm">
-          <div class="banner banner--error">${icons.alert}<div><strong>This cannot be undone.</strong> There is no recovery, export or grace period.</div></div>
+          <div class="banner banner--error">${icons.alert}<div><strong>This cannot be undone.</strong> There is no way to recover the data.</div></div>
           <div class="field">
             <label for="deletePassword">Enter your password to confirm</label>
             <input class="input" id="deletePassword" type="password" autocomplete="current-password" maxlength="200">
@@ -123,7 +123,7 @@ if (shell) {
           errorBox.hidden = false;
           return;
         }
-        setButtonLoading(deleteButton, true, 'Deleting…');
+        setButtonLoading(deleteButton, true, 'Deleting...');
         try {
           await api.delete('/api/auth/account', { password });
           dialog.close();

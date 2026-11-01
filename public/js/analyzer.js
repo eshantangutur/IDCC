@@ -12,7 +12,7 @@ import { mountShell, demoBanner, liveBanner } from './shell.js';
 const shell = await mountShell({
   page: 'analyzer',
   title: 'New analysis',
-  subtitle: 'Reconstruct a speech and report its weaknesses',
+  subtitle: 'Paste a speech and get a report',
   actionsHtml: '<a class="btn btn-ghost btn-sm" href="/history.html">History</a>',
 });
 
@@ -86,14 +86,13 @@ if (shell) {
     document.getElementById('formatGuide').innerHTML = `
       <div class="card-header" style="margin-bottom:10px">
         <div>
-          <span class="eyebrow">${escapeHtml(currentFormat.abbreviation.toUpperCase())} standard</span>
-          <h3 style="margin-top:4px">${escapeHtml(currentFormat.name)}</h3>
+          <h3>${escapeHtml(currentFormat.name)}</h3>
         </div>
         ${formatChip(currentFormat.id)}
       </div>
       <p class="small muted">${escapeHtml(currentFormat.description)}</p>
       <div style="margin-top:14px">
-        <span class="eyebrow">Evaluation focus</span>
+        <h4>What it checks</h4>
         <div class="focus-list" style="margin-top:8px">
           ${currentFormat.focusAreas.map((area) => `<span>${escapeHtml(area)}</span>`).join('')}
         </div>
@@ -103,10 +102,10 @@ if (shell) {
         ${escapeHtml(currentFormat.specialTool.description)}
       </div>
       <div style="margin-top:14px">
-        <span class="eyebrow">Rubric dimensions</span>
+        <h4>Scoring areas</h4>
         <div class="stack-sm" style="margin-top:8px">
           ${currentFormat.rubric.map((dimension) => `
-            <div class="tiny muted"><strong style="color:var(--text-soft)">${escapeHtml(dimension.name)}</strong> — ${escapeHtml(dimension.definition)}</div>`).join('')}
+            <div class="tiny muted"><strong style="color:var(--text-soft)">${escapeHtml(dimension.name)}</strong>: ${escapeHtml(dimension.definition)}</div>`).join('')}
         </div>
       </div>`;
   }
@@ -161,17 +160,17 @@ if (shell) {
         <div class="analyzing__head">
           <span class="spinner spinner--lg" aria-hidden="true"></span>
           <div>
-            <strong>${meta.ai.mode === 'demo' ? 'Running local structural analysis…' : 'Analyzing your argument…'}</strong>
+            <strong>${meta.ai.mode === 'demo' ? 'Running the demo checker...' : 'Analyzing the speech...'}</strong>
             <div class="tiny muted">${meta.ai.mode === 'demo'
-              ? 'Demo mode: local heuristics extract structure from your text. No model is called.'
-              : `Live mode: ${escapeHtml(meta.ai.provider)} is reconstructing the argument. This can take 20–60 seconds.`}</div>
+              ? 'Demo mode uses local rules. No AI model is called.'
+              : `Live AI: ${escapeHtml(meta.ai.provider)} is reading the speech. This can take 20 to 60 seconds.`}</div>
           </div>
           <span class="chip" data-elapsed style="margin-left:auto">0s</span>
         </div>
         <div class="steps">
           <div class="step is-active"><span class="step__dot"></span><span>Send the speech with the ${escapeHtml(currentFormat.abbreviation.toUpperCase())} rubric</span></div>
-          <div class="step"><span class="step__dot"></span><span>Validate the structured response</span></div>
-          <div class="step"><span class="step__dot"></span><span>Store findings and the argument graph</span></div>
+          <div class="step"><span class="step__dot"></span><span>Check the response</span></div>
+          <div class="step"><span class="step__dot"></span><span>Save the report</span></div>
         </div>
       </div>`;
     const elapsedElement = analyzingSlot.querySelector('[data-elapsed]');
@@ -200,7 +199,7 @@ if (shell) {
     if (problem) return showError(problem);
 
     pending = true;
-    setButtonLoading(analyzeButton, true, 'Analysing…');
+    setButtonLoading(analyzeButton, true, 'Analyzing...');
     const progress = showAnalyzing();
 
     const payload = {
@@ -221,8 +220,8 @@ if (shell) {
       progress.setStage(3);
       toast(
         result.comparison
-          ? `Revision analysed. ${result.comparison.resolvedCount} previous weakness${result.comparison.resolvedCount === 1 ? '' : 'es'} resolved.`
-          : 'Analysis complete. Opening the report…',
+          ? `Revision complete. ${result.comparison.resolvedCount} previous weakness${result.comparison.resolvedCount === 1 ? '' : 'es'} resolved.`
+          : 'Report ready. Opening it...',
         'success',
         { duration: 2600 }
       );
@@ -233,7 +232,7 @@ if (shell) {
       setButtonLoading(analyzeButton, false);
       showError(
         error.code === 'ai_unavailable' || error.code === 'ai_invalid_response'
-          ? `${error.message} Your speech was not saved. You can retry, or switch AI_DEMO_MODE on to analyse locally.`
+          ? `${error.message} Your speech was not saved. Try again.`
           : error.message || 'The analysis could not be completed.'
       );
       toast('Analysis failed.', 'error');
@@ -271,8 +270,8 @@ if (shell) {
   // Load saved cases into the selector.
   try {
     const { cases } = await api.get('/api/cases?limit=200');
-    caseSelect.innerHTML = '<option value="">No case — standalone analysis</option>' + cases
-      .map((entry) => `<option value="${entry.id}">${escapeHtml(entry.title)} · ${escapeHtml(entry.format.toUpperCase())}</option>`)
+    caseSelect.innerHTML = '<option value="">No case (standalone analysis)</option>' + cases
+      .map((entry) => `<option value="${entry.id}">${escapeHtml(entry.title)} (${escapeHtml(entry.format.toUpperCase())})</option>`)
       .join('');
   } catch (error) {
     toast(error.message || 'Could not load saved cases.', 'error');
@@ -313,9 +312,9 @@ if (shell) {
         <div class="banner banner--info">
           ${icons.info}
           <div>
-            <strong>Revision mode.</strong> This analysis will create version ${speechData.speech.latestVersion + 1} of
-            “${escapeHtml(speechData.speech.title)}” and compare it with the previous report.
-            <a href="/revise.html?id=${speechData.speech.id}">Open the revision workspace</a> for a diff and readiness checklist.
+            <strong>Revision mode.</strong> This report will create version ${speechData.speech.latestVersion + 1} of
+            ${escapeHtml(speechData.speech.title)} and compare it with the previous report.
+            <a href="/revise.html?id=${speechData.speech.id}">Open revision</a> to compare the text.
           </div>
         </div>`;
     } catch (error) {
