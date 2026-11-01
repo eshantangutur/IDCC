@@ -20,8 +20,8 @@ import { createStatsRouter } from './routes/stats.js';
 import { createAiService } from './services/ai/index.js';
 import { createAnalysisService } from './services/analysis-service.js';
 
-export function createApp({ config, logger = createLogger({ level: config.logLevel }) }) {
-  const db = createDatabase({ filename: config.databasePath, logger });
+export async function createApp({ config, logger = createLogger({ level: config.logLevel }) }) {
+  const db = await createDatabase({ config, logger });
   const ai = createAiService({ config, logger });
   const analysisService = createAnalysisService({ db, logger, ai });
 
@@ -80,6 +80,7 @@ export function createApp({ config, logger = createLogger({ level: config.logLev
       time: new Date().toISOString(),
       aiMode: config.ai.demoMode ? 'demo' : 'live',
       environment: config.env,
+      storage: config.databaseUrl ? 'remote' : 'local',
     });
   });
 

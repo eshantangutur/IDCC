@@ -18,7 +18,7 @@ export function createAnalysesRouter({ db }) {
   const router = Router();
   router.use(requireAuth);
 
-  router.get('/', (req, res) => {
+  router.get('/', async (req, res) => {
     const format = req.query.format ? enumValue(String(req.query.format), FORMAT_IDS, 'format') : null;
     const query = optionalString(req.query.q, 'Search query', { max: 120 });
     const speechId = optionalId(req.query.speechId, 'speechId');
@@ -41,7 +41,7 @@ export function createAnalysesRouter({ db }) {
       params.push(like, like, like);
     }
 
-    const rows = db.all(
+    const rows = await db.all(
       `SELECT a.id, a.speech_id, a.case_id, a.format, a.side, a.speech_type, a.resolution,
               a.created_at, a.mode, a.is_demo, a.result_json, a.speech_version_id,
               s.title AS speech_title, v.version AS speech_version
@@ -78,16 +78,21 @@ export function createAnalysesRouter({ db }) {
     });
   });
 
-  router.get('/:id', (req, res) => {
-    const analysis = loadAnalysis(db, req.user.id, Number(req.params.id));
+  router.get('/:id', async (req, res) => {
+    const analysis = await loadAnalysis(db, req.user.id, Number(req.params.id));
     res.json({ analysis });
   });
 
-  router.delete('/:id', (req, res) => {
+  router.delete('/:id', async (req, res) => {
     const id = Number(req.params.id);
-    const row = db.get('SELECT id FROM analyses WHERE id = ? AND user_id = ?', id, req.user.id);
+    const row = await db.get('SELECT id FROM analyses WHERE id = ? AND user_id = ?', id, req.user.id);
     if (!row) throw notFound('That analysis does not exist in your workspace.');
-    db.run('DELETE FROM analyses WHERE id = ? AND user_id = ?', id, req.user.id);
+    await db.transaction(async (tx) => {
+      await tx.run('DELETE FROM analysis_findings WHERE analysis_id = ?', id);
+      await tx.run('DELETE FROM argument_nodes WHERE analysis_id = ?', id);
+      await tx.run('DELETE FROM argument_edges WHERE analysis_id = ?', id);
+      await tx.run('DELETE FROM analyses WHERE id = ? AND user_id = ?', id, req.user.id);
+    });
     res.json({ deleted: true, id });
   });
 

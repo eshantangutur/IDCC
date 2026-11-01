@@ -1,9 +1,9 @@
 import { unauthorized } from '../utils/errors.js';
 
 /** Rejects unauthenticated requests to protected endpoints. */
-export function requireAuth(req, res, next) {
+export async function requireAuth(req, res, next) {
   if (!req.session?.userId) return next(unauthorized());
-  const user = req.app.locals.db.get(
+  const user = await req.app.locals.db.get(
     'SELECT id, email, display_name, created_at FROM users WHERE id = ?',
     req.session.userId
   );

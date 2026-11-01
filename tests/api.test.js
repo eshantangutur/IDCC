@@ -96,7 +96,7 @@ test('registration validates input and stores only password hashes', async () =>
   });
   assert.equal(duplicate.status, 409);
 
-  const row = ctx.db.get('SELECT password_hash FROM users WHERE email = ?', state.aliceEmail);
+  const row = await ctx.db.get('SELECT password_hash FROM users WHERE email = ?', state.aliceEmail);
   assert.ok(row.password_hash.startsWith('$2'));
   assert.notEqual(row.password_hash, 'StrongPass123');
 });
@@ -109,7 +109,7 @@ test('sessions persist across requests and logout invalidates them', async () =>
   assert.equal(login.data.user.id, state.aliceId);
   assert.ok(login.data.csrfToken);
 
-  const sessionRow = ctx.db.get('SELECT COUNT(*) AS count FROM sessions WHERE user_id = ?', state.aliceId);
+  const sessionRow = await ctx.db.get('SELECT COUNT(*) AS count FROM sessions WHERE user_id = ?', state.aliceId);
   assert.ok(sessionRow.count >= 1, 'session row persisted in SQLite');
 
   const me = await client.get('/api/auth/me');
@@ -212,15 +212,15 @@ test('analysis runs in demo mode and persists findings, nodes and edges', async 
   state.analysisId = response.data.analysisId;
   state.speechId = response.data.speechId;
 
-  const stored = ctx.db.get('SELECT * FROM analyses WHERE id = ?', state.analysisId);
+  const stored = await ctx.db.get('SELECT * FROM analyses WHERE id = ?', state.analysisId);
   assert.equal(stored.user_id, state.aliceId);
   assert.equal(stored.is_demo, 1);
   assert.ok(stored.result_json.length > 100);
 
-  const findings = ctx.db.all('SELECT * FROM analysis_findings WHERE analysis_id = ? ORDER BY position', state.analysisId);
+  const findings = await ctx.db.all('SELECT * FROM analysis_findings WHERE analysis_id = ? ORDER BY position', state.analysisId);
   assert.ok(findings.length >= 3);
-  const nodeRows = ctx.db.all('SELECT * FROM argument_nodes WHERE analysis_id = ?', state.analysisId);
-  const edgeRows = ctx.db.all('SELECT * FROM argument_edges WHERE analysis_id = ?', state.analysisId);
+  const nodeRows = await ctx.db.all('SELECT * FROM argument_nodes WHERE analysis_id = ?', state.analysisId);
+  const edgeRows = await ctx.db.all('SELECT * FROM argument_edges WHERE analysis_id = ?', state.analysisId);
   assert.ok(nodeRows.length >= 3);
   assert.ok(edgeRows.length >= 2);
   const nodeKeys = new Set(nodeRows.map((row) => row.node_key));
@@ -413,7 +413,7 @@ test('analyses can be deleted and speech deletion cascades', async () => {
 
   const speechDelete = await alice.delete(`/api/speeches/${state.speechId}`);
   assert.equal(speechDelete.status, 200);
-  const cascade = ctx.db.get('SELECT COUNT(*) AS count FROM analyses WHERE speech_id = ?', state.speechId);
+  const cascade = await ctx.db.get('SELECT COUNT(*) AS count FROM analyses WHERE speech_id = ?', state.speechId);
   assert.equal(cascade.count, 0, 'analyses cascade with the speech');
   const speechGone = await alice.get(`/api/speeches/${state.speechId}`);
   assert.equal(speechGone.status, 404);
@@ -465,9 +465,9 @@ test('account deletion removes all owned data', async () => {
   const removed = await temp.delete('/api/auth/account', { password: 'StrongPass123' });
   assert.equal(removed.status, 200);
 
-  assert.equal(ctx.db.get('SELECT id FROM users WHERE id = ?', userId), null);
-  assert.equal(ctx.db.get('SELECT COUNT(*) AS count FROM debate_cases WHERE user_id = ?', userId).count, 0);
-  assert.equal(ctx.db.get('SELECT COUNT(*) AS count FROM sessions WHERE user_id = ?', userId).count, 0);
+  assert.equal(await ctx.db.get('SELECT id FROM users WHERE id = ?', userId), null);
+  assert.equal((await ctx.db.get('SELECT COUNT(*) AS count FROM debate_cases WHERE user_id = ?', userId)).count, 0);
+  assert.equal((await ctx.db.get('SELECT COUNT(*) AS count FROM sessions WHERE user_id = ?', userId)).count, 0);
 
   const me = await temp.get('/api/auth/me');
   assert.equal(me.status, 401);

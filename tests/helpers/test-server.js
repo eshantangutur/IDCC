@@ -103,6 +103,8 @@ export async function startTestServer(overrides = {}) {
     { NODE_ENV: 'test' },
     {
       databasePath: ':memory:',
+      databaseUrl: null,
+      databaseAuthToken: null,
       session: { secret: 'test-session-secret-0123456789abcdef', cookieSecure: false },
       rateLimits: { globalMax: 100000, authMax: 10000, aiMax: 10000 },
       ai: { demoMode: true, provider: 'demo', demoReason: 'Automated tests run in demo mode.' },
@@ -111,7 +113,7 @@ export async function startTestServer(overrides = {}) {
   );
 
   const logger = createLogger({ level: 'silent' });
-  const app = createApp({ config, logger });
+  const app = await createApp({ config, logger });
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const { port } = server.address();
@@ -126,7 +128,7 @@ export async function startTestServer(overrides = {}) {
     },
     async close() {
       await new Promise((resolve) => server.close(resolve));
-      app.locals.db.close();
+      await app.locals.db.close();
     },
   };
 }

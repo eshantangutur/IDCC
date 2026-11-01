@@ -50,6 +50,25 @@ test('custom OpenAI-compatible providers must declare a base URL and model', () 
   );
 });
 
+test('Vercel production requires remote storage and accepts Turso configuration', () => {
+  const base = { VERCEL: '1', SESSION_SECRET: 'x'.repeat(48) };
+
+  assert.throws(() => loadConfig({ ...base, NODE_ENV: 'development' }), /TURSO_DATABASE_URL/);
+  assert.throws(() => loadConfig(base), /TURSO_DATABASE_URL/);
+  assert.throws(
+    () => loadConfig({ ...base, TURSO_DATABASE_URL: 'libsql://example.turso.io' }),
+    /TURSO_AUTH_TOKEN/
+  );
+
+  const config = loadConfig({
+    ...base,
+    TURSO_DATABASE_URL: 'libsql://example.turso.io',
+    TURSO_AUTH_TOKEN: 'test-token',
+  });
+  assert.equal(config.databaseUrl, 'libsql://example.turso.io');
+  assert.equal(config.databaseAuthToken, 'test-token');
+});
+
 test('provider and base URL mismatches are rejected', () => {
   assert.throws(
     () =>

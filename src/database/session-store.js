@@ -6,12 +6,12 @@ import session from 'express-session';
  */
 export function createSqliteSessionStore({ db, defaultTtlMs }) {
   class SqliteSessionStore extends session.Store {
-    get(sid, callback) {
+    async get(sid, callback) {
       try {
-        const row = db.get('SELECT data, expires_at FROM sessions WHERE sid = ?', sid);
+        const row = await db.get('SELECT data, expires_at FROM sessions WHERE sid = ?', sid);
         if (!row) return callback(null, null);
         if (row.expires_at < Date.now()) {
-          db.run('DELETE FROM sessions WHERE sid = ?', sid);
+          await db.run('DELETE FROM sessions WHERE sid = ?', sid);
           return callback(null, null);
         }
         callback(null, JSON.parse(row.data));
@@ -20,12 +20,12 @@ export function createSqliteSessionStore({ db, defaultTtlMs }) {
       }
     }
 
-    set(sid, sessionData, callback) {
+    async set(sid, sessionData, callback) {
       try {
         const expiresAt = sessionData?.cookie?.expires
           ? Date.parse(sessionData.cookie.expires)
           : Date.now() + defaultTtlMs;
-        db.run(
+        await db.run(
           `INSERT INTO sessions (sid, user_id, data, expires_at)
            VALUES (?, ?, ?, ?)
            ON CONFLICT(sid) DO UPDATE SET
@@ -43,39 +43,39 @@ export function createSqliteSessionStore({ db, defaultTtlMs }) {
       }
     }
 
-    touch(sid, sessionData, callback) {
+    async touch(sid, sessionData, callback) {
       try {
         const expiresAt = sessionData?.cookie?.expires
           ? Date.parse(sessionData.cookie.expires)
           : Date.now() + defaultTtlMs;
-        db.run('UPDATE sessions SET expires_at = ? WHERE sid = ?', expiresAt, sid);
+        await db.run('UPDATE sessions SET expires_at = ? WHERE sid = ?', expiresAt, sid);
         callback(null);
       } catch (error) {
         callback(error);
       }
     }
 
-    destroy(sid, callback) {
+    async destroy(sid, callback) {
       try {
-        db.run('DELETE FROM sessions WHERE sid = ?', sid);
+        await db.run('DELETE FROM sessions WHERE sid = ?', sid);
         callback(null);
       } catch (error) {
         callback(error);
       }
     }
 
-    length(callback) {
+    async length(callback) {
       try {
-        const row = db.get('SELECT COUNT(*) AS count FROM sessions WHERE expires_at > ?', Date.now());
+        const row = await db.get('SELECT COUNT(*) AS count FROM sessions WHERE expires_at > ?', Date.now());
         callback(null, row?.count ?? 0);
       } catch (error) {
         callback(error);
       }
     }
 
-    clear(callback) {
+    async clear(callback) {
       try {
-        db.run('DELETE FROM sessions');
+        await db.run('DELETE FROM sessions');
         callback(null);
       } catch (error) {
         callback(error);
@@ -86,9 +86,11 @@ export function createSqliteSessionStore({ db, defaultTtlMs }) {
   return new SqliteSessionStore();
 }
 
-export function destroyUserSessions(db, userId, exceptSid = null) {
+export async function destroyUserSessions(db, userId, exceptSid = null) {
   if (exceptSid) {
-    return db.run('DELETE FROM sessions WHERE user_id = ? AND sid != ?', userId, exceptSid).changes;
+    const result = await db.run('DELETE FROM sessions WHERE user_id = ? AND sid != ?', userId, exceptSid);
+    return result.changes;
   }
-  return db.run('DELETE FROM sessions WHERE user_id = ?', userId).changes;
+  const result = await db.run('DELETE FROM sessions WHERE user_id = ?', userId);
+  return result.changes;
 }

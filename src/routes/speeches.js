@@ -8,26 +8,26 @@ export function createSpeechesRouter({ db, config }) {
   const router = Router();
   router.use(requireAuth);
 
-  function loadOwnedSpeech(userId, speechId) {
-    const row = db.get('SELECT * FROM speeches WHERE id = ? AND user_id = ?', speechId, userId);
+  async function loadOwnedSpeech(userId, speechId) {
+    const row = await db.get('SELECT * FROM speeches WHERE id = ? AND user_id = ?', speechId, userId);
     if (!row) throw notFound('That speech does not exist in your workspace.');
     return row;
   }
 
-  router.get('/:id', (req, res) => {
-    const speech = loadOwnedSpeech(req.user.id, Number(req.params.id));
-    const versions = db.all(
+  router.get('/:id', async (req, res) => {
+    const speech = await loadOwnedSpeech(req.user.id, Number(req.params.id));
+    const versions = await db.all(
       'SELECT id, version, label, word_count, created_at FROM speech_versions WHERE speech_id = ? ORDER BY version DESC',
       speech.id
     );
-    const analyses = db.all(
+    const analyses = await db.all(
       `SELECT id, created_at, mode, is_demo, format, speech_type, summary
        FROM analyses WHERE speech_id = ? AND user_id = ? ORDER BY id DESC LIMIT 50`,
       speech.id,
       req.user.id
     );
     const caseRow = speech.case_id
-      ? db.get('SELECT id, title, resolution FROM debate_cases WHERE id = ? AND user_id = ?', speech.case_id, req.user.id)
+      ? await db.get('SELECT id, title, resolution FROM debate_cases WHERE id = ? AND user_id = ?', speech.case_id, req.user.id)
       : null;
 
     res.json({
@@ -63,10 +63,10 @@ export function createSpeechesRouter({ db, config }) {
     });
   });
 
-  router.get('/:id/versions', (req, res) => {
-    const speech = loadOwnedSpeech(req.user.id, Number(req.params.id));
+  router.get('/:id/versions', async (req, res) => {
+    const speech = await loadOwnedSpeech(req.user.id, Number(req.params.id));
     const includeContent = req.query.include === 'content';
-    const rows = db.all(
+    const rows = await db.all(
       'SELECT id, version, label, word_count, content, created_at FROM speech_versions WHERE speech_id = ? ORDER BY version DESC',
       speech.id
     );
@@ -82,12 +82,12 @@ export function createSpeechesRouter({ db, config }) {
     });
   });
 
-  router.post('/:id/versions', (req, res) => {
-    const speech = loadOwnedSpeech(req.user.id, Number(req.params.id));
+  router.post('/:id/versions', async (req, res) => {
+    const speech = await loadOwnedSpeech(req.user.id, Number(req.params.id));
     const content = requiredString(req.body?.content, 'Speech text', { min: 20, max: config.ai.maxSpeechChars });
     const label = optionalString(req.body?.label, 'Version label', { max: 120 });
 
-    const latest = db.get(
+    const latest = await db.get(
       'SELECT * FROM speech_versions WHERE speech_id = ? ORDER BY version DESC LIMIT 1',
       speech.id
     );
@@ -106,8 +106,8 @@ export function createSpeechesRouter({ db, config }) {
     }
 
     const nextVersion = (latest?.version ?? 0) + 1;
-    const inserted = db.transaction(() => {
-      const row = db.get(
+    const inserted = await db.transaction(async (tx) => {
+      const row = await tx.get(
         `INSERT INTO speech_versions (speech_id, version, content, label, word_count)
          VALUES (?, ?, ?, ?, ?) RETURNING *`,
         speech.id,
@@ -116,7 +116,7 @@ export function createSpeechesRouter({ db, config }) {
         label || `Revision ${nextVersion}`,
         countWords(content)
       );
-      db.run(
+      await tx.run(
         `UPDATE speeches SET latest_version = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
          WHERE id = ? AND user_id = ?`,
         nextVersion,
@@ -138,9 +138,17 @@ export function createSpeechesRouter({ db, config }) {
     });
   });
 
-  router.delete('/:id', (req, res) => {
-    const speech = loadOwnedSpeech(req.user.id, Number(req.params.id));
-    db.run('DELETE FROM speeches WHERE id = ? AND user_id = ?', speech.id, req.user.id);
+  router.delete('/:id', async (req, res) => {
+    const speech = await loadOwnedSpeech(req.user.id, Number(req.params.id));
+    await db.transaction(async (tx) => {
+      const ownedAnalyses = 'SELECT id FROM analyses WHERE speech_id = ? AND user_id = ?';
+      await tx.run(`DELETE FROM analysis_findings WHERE analysis_id IN (${ownedAnalyses})`, speech.id, req.user.id);
+      await tx.run(`DELETE FROM argument_nodes WHERE analysis_id IN (${ownedAnalyses})`, speech.id, req.user.id);
+      await tx.run(`DELETE FROM argument_edges WHERE analysis_id IN (${ownedAnalyses})`, speech.id, req.user.id);
+      await tx.run('DELETE FROM analyses WHERE speech_id = ? AND user_id = ?', speech.id, req.user.id);
+      await tx.run('DELETE FROM speech_versions WHERE speech_id = ?', speech.id);
+      await tx.run('DELETE FROM speeches WHERE id = ? AND user_id = ?', speech.id, req.user.id);
+    });
     res.json({ deleted: true, id: speech.id });
   });
 

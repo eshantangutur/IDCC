@@ -1,5 +1,4 @@
-PRAGMA foreign_keys = ON;
-
+export const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT NOT NULL UNIQUE,
@@ -129,3 +128,4 @@ CREATE TABLE IF NOT EXISTS argument_edges (
   UNIQUE (analysis_id, source_key, target_key, relation)
 );
 CREATE INDEX IF NOT EXISTS idx_edges_analysis ON argument_edges (analysis_id);
+`;

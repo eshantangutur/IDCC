@@ -27,8 +27,22 @@ const DEV_SESSION_SECRET = 'argument-forensics-development-secret-change-me';
  * Secrets are read here only and never leave the server process.
  */
 export function loadConfig(env = process.env, overrides = {}) {
-  const isProduction = env.NODE_ENV === 'production';
+  const onVercel = bool(env.VERCEL, false);
+  const isProduction = env.NODE_ENV === 'production' || onVercel;
   const secret = String(env.SESSION_SECRET || '').trim();
+  const databaseUrl = String(env.TURSO_DATABASE_URL || '').trim();
+  const databaseAuthToken = String(env.TURSO_AUTH_TOKEN || '').trim();
+
+  if (databaseUrl && !databaseAuthToken) {
+    throw new Error('TURSO_AUTH_TOKEN must be set when TURSO_DATABASE_URL points at a remote database.');
+  }
+
+  if (onVercel && !databaseUrl) {
+    throw new Error(
+      'TURSO_DATABASE_URL is required on Vercel because serverless functions cannot write a local SQLite file. ' +
+        'Add a Turso database to the project and set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN.'
+    );
+  }
 
   if (isProduction && secret.length < 32) {
     throw new Error(
@@ -102,6 +116,8 @@ export function loadConfig(env = process.env, overrides = {}) {
     databasePath: env.DATABASE_PATH
       ? path.resolve(PROJECT_ROOT, env.DATABASE_PATH)
       : path.join(PROJECT_ROOT, 'data', 'argument-forensics.sqlite'),
+    databaseUrl,
+    databaseAuthToken,
     trustProxy: env.TRUST_PROXY !== undefined ? env.TRUST_PROXY : isProduction ? '1' : 'loopback',
     allowedOrigins: list(env.ALLOWED_ORIGINS),
     logLevel: env.LOG_LEVEL || (isProduction ? 'info' : 'debug'),

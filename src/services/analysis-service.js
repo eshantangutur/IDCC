@@ -56,14 +56,14 @@ export function compareWithPrevious(previous, newContent) {
   };
 }
 
-function loadOwnedSpeech(db, userId, speechId) {
-  const speech = db.get('SELECT * FROM speeches WHERE id = ? AND user_id = ?', speechId, userId);
+async function loadOwnedSpeech(db, userId, speechId) {
+  const speech = await db.get('SELECT * FROM speeches WHERE id = ? AND user_id = ?', speechId, userId);
   if (!speech) throw notFound('That speech does not exist in your workspace.');
   return speech;
 }
 
-function loadLatestAnalysis(db, userId, speechId) {
-  const row = db.get(
+async function loadLatestAnalysis(db, userId, speechId) {
+  const row = await db.get(
     `SELECT id, content, result_json, created_at
      FROM analyses
      WHERE speech_id = ? AND user_id = ?
@@ -107,12 +107,12 @@ export function createAnalysisService({ db, logger, ai }) {
     let previous = null;
 
     if (speechId) {
-      speech = loadOwnedSpeech(db, userId, speechId);
-      previous = loadLatestAnalysis(db, userId, speech.id);
+      speech = await loadOwnedSpeech(db, userId, speechId);
+      previous = await loadLatestAnalysis(db, userId, speech.id);
     }
 
     if (caseId) {
-      const ownedCase = db.get('SELECT id FROM debate_cases WHERE id = ? AND user_id = ?', caseId, userId);
+      const ownedCase = await db.get('SELECT id FROM debate_cases WHERE id = ? AND user_id = ?', caseId, userId);
       if (!ownedCase) throw notFound('That case does not exist in your workspace.');
     }
 
@@ -126,13 +126,13 @@ export function createAnalysisService({ db, logger, ai }) {
 
     const comparison = previous ? compareWithPrevious(previous, content) : null;
 
-    const persisted = db.transaction(() => {
+    const persisted = await db.transaction(async (tx) => {
       let speechRow = speech;
       let versionRow;
       let versionCreated = false;
 
       if (!speechRow) {
-        const speechInsert = db.run(
+        const speechInsert = await tx.run(
           `INSERT INTO speeches (user_id, case_id, title, format, side, speech_type, resolution, latest_version)
            VALUES (?, ?, ?, ?, ?, ?, ?, 1)`,
           userId,
@@ -143,8 +143,8 @@ export function createAnalysisService({ db, logger, ai }) {
           speechType,
           resolution
         );
-        speechRow = db.get('SELECT * FROM speeches WHERE id = ?', speechInsert.lastInsertRowid);
-        versionRow = db.get(
+        speechRow = await tx.get('SELECT * FROM speeches WHERE id = ?', speechInsert.lastInsertRowid);
+        versionRow = await tx.get(
           `INSERT INTO speech_versions (speech_id, version, content, label, word_count)
            VALUES (?, 1, ?, 'Initial draft', ?) RETURNING *`,
           speechRow.id,
@@ -153,7 +153,7 @@ export function createAnalysisService({ db, logger, ai }) {
         );
         versionCreated = true;
       } else {
-        const latest = db.get(
+        const latest = await tx.get(
           'SELECT * FROM speech_versions WHERE speech_id = ? ORDER BY version DESC LIMIT 1',
           speechRow.id
         );
@@ -161,7 +161,7 @@ export function createAnalysisService({ db, logger, ai }) {
           versionRow = latest;
         } else {
           const nextVersion = (latest?.version ?? 0) + 1;
-          versionRow = db.get(
+          versionRow = await tx.get(
             `INSERT INTO speech_versions (speech_id, version, content, label, word_count)
              VALUES (?, ?, ?, ?, ?) RETURNING *`,
             speechRow.id,
@@ -172,7 +172,7 @@ export function createAnalysisService({ db, logger, ai }) {
           );
           versionCreated = true;
         }
-        db.run(
+        await tx.run(
           `UPDATE speeches
            SET latest_version = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
                resolution = ?, format = ?, side = ?, speech_type = ?,
@@ -187,10 +187,10 @@ export function createAnalysisService({ db, logger, ai }) {
           speechRow.id,
           userId
         );
-        speechRow = db.get('SELECT * FROM speeches WHERE id = ?', speechRow.id);
+        speechRow = await tx.get('SELECT * FROM speeches WHERE id = ?', speechRow.id);
       }
 
-      const analysisInsert = db.run(
+      const analysisInsert = await tx.run(
         `INSERT INTO analyses
           (user_id, speech_id, speech_version_id, case_id, format, side, speech_type, resolution,
            content, summary, rubric_json, format_specific_json, result_json, comparison_json,
@@ -219,8 +219,8 @@ export function createAnalysisService({ db, logger, ai }) {
 
       const analysisId = analysisInsert.lastInsertRowid;
 
-      analysis.findings.forEach((finding, index) => {
-        db.run(
+      for (const [index, finding] of analysis.findings.entries()) {
+        await tx.run(
           `INSERT INTO analysis_findings
             (analysis_id, category, weakness_type, title, passage, explanation, why_it_matters,
              suggestion, confidence, node_key, tags_json, position)
@@ -238,10 +238,10 @@ export function createAnalysisService({ db, logger, ai }) {
           JSON.stringify(finding.tags || []),
           index
         );
-      });
+      }
 
-      analysis.nodes.forEach((node, index) => {
-        db.run(
+      for (const [index, node] of analysis.nodes.entries()) {
+        await tx.run(
           `INSERT INTO argument_nodes (analysis_id, node_key, type, label, excerpt, detail, strength, position)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           analysisId,
@@ -253,10 +253,10 @@ export function createAnalysisService({ db, logger, ai }) {
           node.strength,
           index
         );
-      });
+      }
 
-      analysis.edges.forEach((edge) => {
-        db.run(
+      for (const edge of analysis.edges) {
+        await tx.run(
           `INSERT INTO argument_edges (analysis_id, source_key, target_key, relation, explanation, supported)
            VALUES (?, ?, ?, ?, ?, ?)`,
           analysisId,
@@ -266,7 +266,7 @@ export function createAnalysisService({ db, logger, ai }) {
           edge.explanation,
           edge.supported ? 1 : 0
         );
-      });
+      }
 
       return {
         analysisId,
@@ -306,8 +306,8 @@ export function createAnalysisService({ db, logger, ai }) {
   return { run };
 }
 
-export function loadAnalysis(db, userId, analysisId) {
-  const row = db.get('SELECT * FROM analyses WHERE id = ? AND user_id = ?', analysisId, userId);
+export async function loadAnalysis(db, userId, analysisId) {
+  const row = await db.get('SELECT * FROM analyses WHERE id = ? AND user_id = ?', analysisId, userId);
   if (!row) throw notFound('That analysis does not exist in your workspace.');
 
   let result;
@@ -327,11 +327,11 @@ export function loadAnalysis(db, userId, analysisId) {
   }
 
   const speech = row.speech_id
-    ? db.get('SELECT id, title, latest_version, format, side, speech_type FROM speeches WHERE id = ? AND user_id = ?', row.speech_id, userId)
+    ? await db.get('SELECT id, title, latest_version, format, side, speech_type FROM speeches WHERE id = ? AND user_id = ?', row.speech_id, userId)
     : null;
 
   const speechVersionRow = row.speech_version_id
-    ? db.get('SELECT version FROM speech_versions WHERE id = ?', row.speech_version_id)
+    ? await db.get('SELECT version FROM speech_versions WHERE id = ?', row.speech_version_id)
     : null;
 
   return {

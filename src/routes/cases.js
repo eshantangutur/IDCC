@@ -52,8 +52,8 @@ export function createCasesRouter({ db }) {
   const router = Router();
   router.use(requireAuth);
 
-  function loadOwnedCase(userId, caseId) {
-    const row = db.get(
+  async function loadOwnedCase(userId, caseId) {
+    const row = await db.get(
       `SELECT c.*,
         (SELECT COUNT(*) FROM speeches s WHERE s.case_id = c.id) AS speech_count,
         (SELECT COUNT(*) FROM analyses a WHERE a.case_id = c.id) AS analysis_count
@@ -65,7 +65,7 @@ export function createCasesRouter({ db }) {
     return row;
   }
 
-  router.get('/', (req, res) => {
+  router.get('/', async (req, res) => {
     const format = req.query.format ? enumValue(String(req.query.format), FORMAT_IDS, 'format') : null;
     const query = optionalString(req.query.q, 'Search query', { max: 120 });
     const limit = Math.min(Math.max(Number.parseInt(req.query.limit ?? '100', 10) || 100, 1), MAX_CASES);
@@ -83,7 +83,7 @@ export function createCasesRouter({ db }) {
       params.push(like, like, like);
     }
 
-    const rows = db.all(
+    const rows = await db.all(
       `SELECT c.*,
         (SELECT COUNT(*) FROM speeches s WHERE s.case_id = c.id) AS speech_count,
         (SELECT COUNT(*) FROM analyses a WHERE a.case_id = c.id) AS analysis_count
@@ -98,7 +98,7 @@ export function createCasesRouter({ db }) {
     res.json({ cases: rows.map(serializeCase) });
   });
 
-  router.post('/', (req, res) => {
+  router.post('/', async (req, res) => {
     const title = requiredString(req.body?.title, 'Case title', { max: 160 });
     const resolution = requiredString(req.body?.resolution, 'Resolution', { max: 500 });
     const format = enumValue(req.body?.format, FORMAT_IDS, 'Format');
@@ -107,12 +107,12 @@ export function createCasesRouter({ db }) {
     const notes = optionalString(req.body?.notes, 'Notes', { max: 8000 });
     const contentions = req.body?.contentions === undefined ? [] : serializeContentions(req.body.contentions);
 
-    const count = db.get('SELECT COUNT(*) AS count FROM debate_cases WHERE user_id = ?', req.user.id);
+    const count = await db.get('SELECT COUNT(*) AS count FROM debate_cases WHERE user_id = ?', req.user.id);
     if (count.count >= MAX_CASES) {
       throw badRequest(`You have reached the ${MAX_CASES} case limit. Delete a case to create another.`);
     }
 
-    const result = db.run(
+    const result = await db.run(
       `INSERT INTO debate_cases (user_id, title, resolution, format, side, notes, contentions_json)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       req.user.id,
@@ -124,12 +124,12 @@ export function createCasesRouter({ db }) {
       JSON.stringify(contentions)
     );
 
-    res.status(201).json({ case: serializeCase(loadOwnedCase(req.user.id, result.lastInsertRowid)) });
+    res.status(201).json({ case: serializeCase(await loadOwnedCase(req.user.id, result.lastInsertRowid)) });
   });
 
-  router.get('/:id', (req, res) => {
-    const caseRow = loadOwnedCase(req.user.id, Number(req.params.id));
-    const speeches = db.all(
+  router.get('/:id', async (req, res) => {
+    const caseRow = await loadOwnedCase(req.user.id, Number(req.params.id));
+    const speeches = await db.all(
       `SELECT s.id, s.title, s.format, s.side, s.speech_type, s.latest_version, s.created_at, s.updated_at,
         (SELECT COUNT(*) FROM analyses a WHERE a.speech_id = s.id) AS analysis_count,
         (SELECT id FROM analyses a WHERE a.speech_id = s.id ORDER BY a.id DESC LIMIT 1) AS last_analysis_id,
@@ -158,9 +158,9 @@ export function createCasesRouter({ db }) {
     });
   });
 
-  router.put('/:id', (req, res) => {
+  router.put('/:id', async (req, res) => {
     const caseId = Number(req.params.id);
-    const existing = loadOwnedCase(req.user.id, caseId);
+    const existing = await loadOwnedCase(req.user.id, caseId);
 
     const title = req.body?.title === undefined ? existing.title : requiredString(req.body.title, 'Case title', { max: 160 });
     const resolution = req.body?.resolution === undefined
@@ -181,7 +181,7 @@ export function createCasesRouter({ db }) {
       ? parseContentionsColumn(existing.contentions_json)
       : serializeContentions(req.body.contentions);
 
-    db.run(
+    await db.run(
       `UPDATE debate_cases
        SET title = ?, resolution = ?, format = ?, side = ?, notes = ?, contentions_json = ?,
            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
@@ -196,13 +196,17 @@ export function createCasesRouter({ db }) {
       req.user.id
     );
 
-    res.json({ case: serializeCase(loadOwnedCase(req.user.id, caseId)) });
+    res.json({ case: serializeCase(await loadOwnedCase(req.user.id, caseId)) });
   });
 
-  router.delete('/:id', (req, res) => {
+  router.delete('/:id', async (req, res) => {
     const caseId = Number(req.params.id);
-    loadOwnedCase(req.user.id, caseId);
-    db.run('DELETE FROM debate_cases WHERE id = ? AND user_id = ?', caseId, req.user.id);
+    await loadOwnedCase(req.user.id, caseId);
+    await db.transaction(async (tx) => {
+      await tx.run('UPDATE speeches SET case_id = NULL WHERE case_id = ? AND user_id = ?', caseId, req.user.id);
+      await tx.run('UPDATE analyses SET case_id = NULL WHERE case_id = ? AND user_id = ?', caseId, req.user.id);
+      await tx.run('DELETE FROM debate_cases WHERE id = ? AND user_id = ?', caseId, req.user.id);
+    });
     res.json({ deleted: true, id: caseId });
   });
 
