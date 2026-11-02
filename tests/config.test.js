@@ -69,6 +69,19 @@ test('Vercel production requires remote storage and accepts Turso configuration'
   assert.equal(config.databaseAuthToken, 'test-token');
 });
 
+test('production uses a numeric trust proxy so secure cookies work behind Vercel', () => {
+  const base = {
+    VERCEL: '1',
+    SESSION_SECRET: 'x'.repeat(48),
+    TURSO_DATABASE_URL: 'libsql://example.turso.io',
+    TURSO_AUTH_TOKEN: 'test-token',
+  };
+
+  assert.equal(loadConfig(base).trustProxy, 1);
+  assert.equal(loadConfig({ ...base, TRUST_PROXY: '2' }).trustProxy, 2);
+  assert.equal(loadConfig({ ...base, TRUST_PROXY: 'loopback' }).trustProxy, 'loopback');
+});
+
 test('provider and base URL mismatches are rejected', () => {
   assert.throws(
     () =>

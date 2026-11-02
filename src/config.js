@@ -20,6 +20,18 @@ function list(value) {
     .filter(Boolean);
 }
 
+function parseTrustProxy(value, fallback) {
+  if (value === undefined || value === null || String(value).trim() === '') return fallback;
+  const raw = String(value).trim();
+  // Express treats a numeric string like "1" as an IP address, not a hop
+  // count. That leaves req.secure false behind Vercel's proxy, so Express
+  // silently drops the Secure session cookie. Normalize hop counts to numbers.
+  if (/^\d+$/.test(raw)) return Number(raw);
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  return raw;
+}
+
 const DEV_SESSION_SECRET = 'argument-forensics-development-secret-change-me';
 
 /**
@@ -119,7 +131,7 @@ export function loadConfig(env = process.env, overrides = {}) {
       : path.join(PROJECT_ROOT, 'data', 'argument-forensics.sqlite'),
     databaseUrl,
     databaseAuthToken,
-    trustProxy: env.TRUST_PROXY !== undefined ? env.TRUST_PROXY : isProduction ? '1' : 'loopback',
+    trustProxy: parseTrustProxy(env.TRUST_PROXY, isProduction ? 1 : 'loopback'),
     allowedOrigins: list(env.ALLOWED_ORIGINS),
     logLevel: env.LOG_LEVEL || (isProduction ? 'info' : 'debug'),
     bcryptRounds: Math.min(Math.max(int(env.BCRYPT_ROUNDS, 12), 10), 15),
