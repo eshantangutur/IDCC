@@ -2,7 +2,16 @@ import { escapeHtml } from './core.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-const TYPE_ORDER = ['counterargument', 'assumption', 'evidence', 'warrant', 'claim', 'impact'];
+const TYPE_ORDER = [
+  'concession',
+  'rebuttal',
+  'counterargument',
+  'assumption',
+  'evidence',
+  'warrant',
+  'claim',
+  'impact',
+];
 const TYPE_LABELS = {
   claim: 'Claim',
   evidence: 'Evidence',
@@ -10,6 +19,8 @@ const TYPE_LABELS = {
   impact: 'Impact',
   assumption: 'Assumption',
   counterargument: 'Counterargument',
+  rebuttal: 'Rebuttal',
+  concession: 'Concession',
 };
 export const TYPE_COLORS = {
   claim: '#60a5fa',
@@ -18,6 +29,8 @@ export const TYPE_COLORS = {
   impact: '#d97706',
   assumption: '#38bdf8',
   counterargument: '#dc2626',
+  rebuttal: '#a78bfa',
+  concession: '#f472b6',
 };
 export const TYPE_LABELS_EXPORT = TYPE_LABELS;
 
@@ -159,6 +172,7 @@ export function createArgumentMap(container, { nodes = [], edges = [], onSelectN
       highlightEdge(edge, group);
       onSelectNode?.({
         kind: 'edge',
+        edgeId: edge.id ?? null,
         relation: edge.relation,
         explanation: edge.explanation,
         supported: edge.supported !== false,
@@ -280,6 +294,14 @@ export function createArgumentMap(container, { nodes = [], edges = [], onSelectN
     group.querySelector('path.map-edge')?.classList.add('is-focus');
   }
 
+  function focusEdge(fromId, toId) {
+    clearSelection();
+    for (const [key, { path }] of edgeElements) {
+      const [from, to] = key.split('|');
+      if (from === fromId && to === toId) path.classList.add('is-focus');
+    }
+  }
+
   function setTypeFilter(type) {
     const active = type || null;
     for (const [nodeId, element] of nodeElements) {
@@ -350,6 +372,7 @@ export function createArgumentMap(container, { nodes = [], edges = [], onSelectN
     nodes: safeNodes,
     edges: safeEdges,
     highlightNode,
+    focusEdge,
     clearSelection,
     setTypeFilter,
     zoomIn: () => zoom(1.25),

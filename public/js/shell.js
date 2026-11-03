@@ -6,14 +6,17 @@ const NAV_GROUPS = [
     label: 'Workspace',
     items: [
       { id: 'dashboard', href: '/dashboard.html', label: 'Dashboard', icon: 'grid' },
-      { id: 'analyzer', href: '/analyzer.html', label: 'New analysis', icon: 'plus' },
+      { id: 'analyzer', href: '/analyzer.html', label: 'Speech analyzer', icon: 'plus' },
+      { id: 'rounds', href: '/rounds.html', label: 'Round analyzer', icon: 'layers' },
+      { id: 'maps', href: '/maps.html', label: 'Argument maps', icon: 'map' },
     ],
   },
   {
     label: 'Library',
     items: [
-      { id: 'cases', href: '/cases.html', label: 'Cases', icon: 'folder' },
+      { id: 'cases', href: '/cases.html', label: 'My cases', icon: 'folder' },
       { id: 'history', href: '/history.html', label: 'History', icon: 'clock' },
+      { id: 'progress', href: '/progress.html', label: 'My progress', icon: 'trend' },
     ],
   },
   {

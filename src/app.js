@@ -17,19 +17,30 @@ import { createAnalysesRouter } from './routes/analyses.js';
 import { createAnalyzeRouter } from './routes/analyze.js';
 import { createExtractRouter } from './routes/extract.js';
 import { createStatsRouter } from './routes/stats.js';
+import { createRoundsRouter } from './routes/rounds.js';
+import { createProgressRouter } from './routes/progress.js';
+import { createFeedbackRouter } from './routes/feedback.js';
+import { createBenchmarksRouter } from './routes/benchmarks.js';
+import { createEvidenceRouter } from './routes/evidence.js';
 import { createAiService } from './services/ai/index.js';
 import { createAnalysisService } from './services/analysis-service.js';
+import { createRoundService } from './services/round-service.js';
+import { createProgressService } from './services/progress-service.js';
 
 export async function createApp({ config, logger = createLogger({ level: config.logLevel }) }) {
   const db = await createDatabase({ config, logger });
   const ai = createAiService({ config, logger });
   const analysisService = createAnalysisService({ db, logger, ai });
+  const roundService = createRoundService({ db, logger });
+  const progressService = createProgressService({ db });
 
   const app = express();
   app.locals.db = db;
   app.locals.config = config;
   app.locals.logger = logger;
   app.locals.ai = ai;
+  app.locals.roundService = roundService;
+  app.locals.progressService = progressService;
 
   app.disable('x-powered-by');
   app.set('trust proxy', config.trustProxy);
@@ -72,6 +83,8 @@ export async function createApp({ config, logger = createLogger({ level: config.
   app.use('/api/auth/register', authLimiter);
   app.use('/api/auth/change-password', authLimiter);
   app.use('/api/analyze', aiLimiter);
+  app.use('/api/rounds/:id/analyze', aiLimiter);
+  app.use('/api/evidence/:id/verify', aiLimiter);
   app.use('/api/extract', fileLimiter);
 
   app.get('/api/health', (req, res) => {
@@ -92,6 +105,11 @@ export async function createApp({ config, logger = createLogger({ level: config.
   app.use('/api/analyze', createAnalyzeRouter({ config, analysisService }));
   app.use('/api/extract', createExtractRouter({ config, logger }));
   app.use('/api/stats', createStatsRouter({ db }));
+  app.use('/api/rounds', createRoundsRouter({ config, logger, ai, roundService, aiLimiter }));
+  app.use('/api/evidence', createEvidenceRouter({ db, config, logger, aiLimiter }));
+  app.use('/api/progress', createProgressRouter({ progressService }));
+  app.use('/api/feedback', createFeedbackRouter({ db }));
+  app.use('/api/benchmarks', createBenchmarksRouter({ db }));
   app.use('/api', apiNotFound);
 
   const notFoundPage = path.join(config.publicDir, '404.html');

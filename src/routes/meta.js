@@ -1,5 +1,15 @@
 import { Router } from 'express';
-import { FORMATS, SCORE_SCALE } from '../services/formats.js';
+import {
+  ARGUMENT_RELATIONS,
+  ARGUMENT_STATUSES,
+  ARGUMENT_STATUS_LABELS,
+  ARGUMENT_TYPES,
+  EVIDENCE_ASSESSMENTS,
+  EVIDENCE_ASSESSMENT_LABELS,
+  FORMATS,
+  SCORE_SCALE,
+  getRoundStructure,
+} from '../services/formats.js';
 import { publicAiStatus } from '../config.js';
 
 const WEAKNESS_TYPE_LABELS = {
@@ -41,6 +51,7 @@ export function createMetaRouter({ config }) {
         speechTypes: format.speechTypes,
         focusAreas: format.focusAreas,
         rubric: format.rubric,
+        roundStructure: getRoundStructure(format.id),
         specialTool: {
           key: format.formatSpecific.key,
           label: format.formatSpecific.label,
@@ -50,11 +61,19 @@ export function createMetaRouter({ config }) {
       scoreScale: SCORE_SCALE,
       weaknessTypes: WEAKNESS_TYPE_LABELS,
       categories: CATEGORY_LABELS,
+      argumentStatuses: ARGUMENT_STATUSES.map((status) => ({ id: status, label: ARGUMENT_STATUS_LABELS[status] })),
+      argumentTypes: ARGUMENT_TYPES,
+      argumentRelations: ARGUMENT_RELATIONS,
+      evidenceAssessments: EVIDENCE_ASSESSMENTS.map((id) => ({ id, label: EVIDENCE_ASSESSMENT_LABELS[id] })),
+      evidenceVerificationAvailable: Boolean(config.evidence?.searchUrl),
       ai: publicAiStatus(config),
       limits: {
         maxSpeechChars: config.ai.maxSpeechChars,
         minSpeechChars: 40,
         maxCases: 200,
+        maxRounds: 200,
+        maxRoundSpeeches: 30,
+        maxRoundSpeechChars: 40000,
         maxUploadBytes: config.upload.maxBytes,
       },
     });

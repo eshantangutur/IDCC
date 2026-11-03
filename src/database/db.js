@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { SCHEMA_SQL } from './schema.js';
+import { applyMigrations } from './migrations.js';
 
 function normalizeParams(params) {
   return params.map((param) => {
@@ -75,6 +76,7 @@ async function createRemoteDatabase({ url, authToken, logger }) {
   }
 
   await client.executeMultiple(SCHEMA_SQL);
+  await applyMigrations(base, logger);
 
   async function cleanupExpiredSessions() {
     try {
@@ -185,6 +187,8 @@ async function createLocalDatabase({ filename, logger }) {
       throw error;
     }
   }
+
+  await applyMigrations({ run, get, all }, logger);
 
   async function cleanupExpiredSessions() {
     try {

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My progress | Argument Forensics</title>
+  <meta name="description" content="Skill development across your saved speeches and rounds, built only from stored analyses.">
+  <meta name="color-scheme" content="dark light">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/rounds.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111827'/%3E%3Cpath d='M16 6l2.4 6.2 6.6 2.4-6.6 2.4L16 23l-2.4-6L7 14.6l6.6-2.4z' fill='%232563EB'/%3E%3C/svg%3E">
+</head>
+<body data-page="progress">
+  <div class="app-shell">
+    <aside class="sidebar" id="appSidebar"></aside>
+    <div class="app-body">
+      <header class="topbar" id="appTopbar"></header>
+      <main class="page">
+        <div class="page-header">
+          <div>
+            <h1>My progress</h1>
+            <p class="muted" style="margin:6px 0 0">Ratings come from stored analyses. Nothing here is estimated or compared to other users.</p>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin:16px 0">
+          <select class="select" id="progressFormat" aria-label="Filter by format">
+            <option value="">All formats</option>
+          </select>
+          <select class="select" id="progressSkill" aria-label="Filter by skill">
+            <option value="">All skills</option>
+          </select>
+          <input class="input" type="date" id="progressFrom" aria-label="From date">
+          <input class="input" type="date" id="progressTo" aria-label="To date">
+          <button type="button" class="btn btn-secondary btn-sm" id="progressReset">Reset</button>
+          <span class="grow"></span>
+          <span class="tiny muted" id="progressCount"></span>
+        </div>
+
+        <div id="progressRoot" class="stack-lg">
+          <div class="skeleton" style="height:240px"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="/js/progress.js"></script>
+</body>
+</html>

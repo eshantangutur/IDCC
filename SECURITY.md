@@ -95,3 +95,93 @@ The application stores private competitive-debate material and accepts arbitrary
 ## Reporting a vulnerability
 
 Email `security@argumentforensics.app` with reproduction steps and the affected version. Do not open a public issue for a suspected vulnerability.
+
+---
+
+## Round intelligence expansion (v1.1)
+
+### New data and ownership model
+
+Every new table is owned by a user and scoped by `user_id` in the query, not by
+an id supplied by the client:
+
+- `rounds`, `round_participants`, `round_speeches`, `round_analyses`
+- `round_arguments`, `argument_relationships`, `argument_status_history`
+- `round_findings`, `evidence_records`, `evidence_verifications`
+- `skill_assessments`, `finding_feedback`, `human_annotations`
+- `benchmark_examples`
+
+Foreign keys cascade on delete, so deleting a round removes its speeches,
+arguments, relationships, status history, findings, evidence, verifications,
+feedback, annotations and round-sourced skill assessments in one transaction.
+Tests assert that no orphan rows remain.
+
+Requests that name a foreign id (a speech, argument, relationship, evidence row,
+finding or benchmark) validate that the row belongs to the caller before acting.
+A cross-user id returns 404, not 403, so the API does not confirm that another
+user's record exists.
+
+### Evidence verification honesty
+
+`src/services/evidence-service.js` is a provider registry. The application ships
+with no configured provider, and in that state it stores and returns
+`status = unavailable` with an explicit message. It does not return a source
+title, URL, excerpt or publication date that was not actually retrieved. A
+provider failure is recorded as `error`, never as a successful verification.
+
+### AI output handling
+
+- Round responses are validated and normalised before anything is written
+  (`src/services/ai/round-normalize.js`). Unknown enum values fall back to safe
+  values; relationships referencing an unknown argument are dropped.
+- An evidence record whose quotation cannot be found in the speech it is
+  attributed to is discarded, because the quotation would be fabricated.
+- A finding whose passage cannot be matched keeps the observation but loses the
+  quotation and is downgraded to low confidence.
+- Model output is never evaluated as code. It is stored as data and escaped on
+  render.
+- Round text is wrapped in explicit BEGIN/END UNTRUSTED DATA markers, and the
+  prompt instructs the model to ignore instructions inside it. This reduces but
+  does not eliminate prompt-injection risk: a hostile speech could still bias
+  its own analysis. Treat every finding as an opinion to check.
+
+### Human corrections
+
+User corrections are additive. `finding_feedback` and `human_annotations` store
+the human value beside the original AI value; no update path overwrites
+`analysis_findings` or `round_findings` content. Re-analysis deletes AI-owned
+argument rows but preserves rows the user edited, along with their status,
+labels and manual relationships.
+
+### Benchmark privacy
+
+`benchmark_examples` defaults to `is_shared = 0`. Nothing in the application
+publishes, exports or trains on them. There is no endpoint that lists another
+user's benchmarks. Any future sharing feature would need its own consent step.
+
+### Rate limiting and request size
+
+`/api/rounds/:id/analyze` and `/api/evidence/:id/verify` are limited by the AI
+limiter, mounted once per path so a request is counted once. JSON bodies are
+capped at 300 KB, uploads by `UPLOAD_MAX_BYTES`, and round speech text by
+40,000 characters per speech and 30 speeches per round.
+
+### Retention and deletion
+
+- Users can delete any round, speech, analysis, finding feedback or benchmark
+  example they own.
+- Account deletion removes all owned rows, including the new round tables.
+- Session rows are purged on expiry.
+- Analysis text is sent to the configured AI provider when live mode is on. In
+  demo mode nothing leaves the server.
+
+### Remaining limitations
+
+- No independent security review has been performed.
+- Prompt injection through submitted speech text is mitigated, not solved.
+- The local demo analyser is deterministic but crude; it is labelled in every
+  report and must not be presented as a model judgement.
+- Evidence verification depends on an external provider's accuracy once one is
+  configured.
+- There is no per-round collaborator or coach role yet; all access is per
+  account.

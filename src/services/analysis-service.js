@@ -1,5 +1,6 @@
 import { ApiError, notFound } from '../utils/errors.js';
 import { getSideLabel } from '../services/formats.js';
+import { saveSpeechSkillAssessments } from './progress-service.js';
 
 export function countWords(text) {
   return String(text || '').trim().split(/\s+/).filter(Boolean).length;
@@ -267,6 +268,17 @@ export function createAnalysisService({ db, logger, ai }) {
           edge.supported ? 1 : 0
         );
       }
+
+      // One assessment per scored rubric dimension feeds the progress
+      // dashboard. Ratings are persisted with the analysis they came from.
+      await saveSpeechSkillAssessments({
+        tx,
+        userId,
+        formatSpec,
+        analysis,
+        analysisId,
+        speechId: speechRow.id,
+      });
 
       return {
         analysisId,

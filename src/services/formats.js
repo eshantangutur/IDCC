@@ -370,3 +370,157 @@ export function isValidSide(formatId, sideId) {
   const format = getFormat(formatId);
   return Boolean(format?.sides.some((entry) => entry.id === sideId));
 }
+
+/**
+ * Round speech orders.
+ *
+ * Each slot names the side and the speech type the format actually uses, so a
+ * round is assembled in the right order instead of an identical list for every
+ * event. Congressional Debate has no fixed order, so it is marked flexible and
+ * accepts any of its own speech types in any sequence.
+ */
+const ROUND_STRUCTURES = {
+  pf: {
+    flexibleOrder: false,
+    slots: [
+      { side: 'pro', speechType: 'Case / Constructive', role: 'First Pro Constructive' },
+      { side: 'con', speechType: 'Case / Constructive', role: 'First Con Constructive' },
+      { side: 'pro', speechType: 'Rebuttal', role: 'Pro Rebuttal' },
+      { side: 'con', speechType: 'Rebuttal', role: 'Con Rebuttal' },
+      { side: 'pro', speechType: 'Summary', role: 'Pro Summary' },
+      { side: 'con', speechType: 'Summary', role: 'Con Summary' },
+      { side: 'pro', speechType: 'Final Focus', role: 'Pro Final Focus' },
+      { side: 'con', speechType: 'Final Focus', role: 'Con Final Focus' },
+    ],
+  },
+  ld: {
+    flexibleOrder: false,
+    slots: [
+      { side: 'affirmative', speechType: 'Affirmative Constructive (AC)', role: 'Affirmative Constructive' },
+      { side: 'negative', speechType: 'Negative Constructive (NC)', role: 'Negative Constructive' },
+      { side: 'affirmative', speechType: 'First Affirmative Rebuttal (1AR)', role: 'First Affirmative Rebuttal' },
+      { side: 'negative', speechType: 'Second Negative Rebuttal (2NR)', role: 'Second Negative Rebuttal' },
+      { side: 'affirmative', speechType: 'Second Affirmative Rebuttal (2AR)', role: 'Second Affirmative Rebuttal' },
+    ],
+  },
+  policy: {
+    flexibleOrder: false,
+    slots: [
+      { side: 'affirmative', speechType: '1AC', role: 'First Affirmative Constructive' },
+      { side: 'negative', speechType: '1NC', role: 'First Negative Constructive' },
+      { side: 'affirmative', speechType: '2AC', role: 'Second Affirmative Constructive' },
+      { side: 'negative', speechType: '2NC', role: 'Second Negative Constructive' },
+      { side: 'negative', speechType: '1NR', role: 'First Negative Rebuttal' },
+      { side: 'affirmative', speechType: '1AR', role: 'First Affirmative Rebuttal' },
+      { side: 'negative', speechType: '2NR', role: 'Second Negative Rebuttal' },
+      { side: 'affirmative', speechType: '2AR', role: 'Second Affirmative Rebuttal' },
+    ],
+  },
+  congress: {
+    flexibleOrder: true,
+    slots: [],
+  },
+  wsd: {
+    flexibleOrder: false,
+    slots: [
+      { side: 'proposition', speechType: 'First Proposition', role: 'First Proposition' },
+      { side: 'opposition', speechType: 'First Opposition', role: 'First Opposition' },
+      { side: 'proposition', speechType: 'Second Proposition', role: 'Second Proposition' },
+      { side: 'opposition', speechType: 'Second Opposition', role: 'Second Opposition' },
+      { side: 'proposition', speechType: 'Third Proposition', role: 'Third Proposition' },
+      { side: 'opposition', speechType: 'Third Opposition', role: 'Third Opposition' },
+      { side: 'proposition', speechType: 'Reply Speech', role: 'Proposition Reply' },
+      { side: 'opposition', speechType: 'Reply Speech', role: 'Opposition Reply' },
+    ],
+  },
+};
+
+export function getRoundStructure(formatId) {
+  const format = getFormat(formatId);
+  if (!format) return null;
+  const structure = ROUND_STRUCTURES[format.id];
+  if (!structure) return null;
+  return {
+    flexibleOrder: structure.flexibleOrder,
+    slots: structure.slots.map((slot, index) => ({ ...slot, order: index + 1 })),
+  };
+}
+
+/**
+ * Fills empty slots for a new round so the workspace starts with the correct
+ * speech order for the chosen format. Congressional rounds start empty.
+ */
+export function defaultRoundSpeeches(formatId) {
+  const structure = getRoundStructure(formatId);
+  if (!structure || structure.flexibleOrder) return [];
+  return structure.slots.map((slot, index) => ({
+    position: index + 1,
+    side: slot.side,
+    speechType: slot.speechType,
+    speakerName: '',
+    team: '',
+  }));
+}
+
+export const ARGUMENT_STATUSES = [
+  'introduced',
+  'answered',
+  'partially_answered',
+  'extended',
+  'dropped',
+  'conceded',
+  'turned',
+  'still_contested',
+  'unclear',
+];
+
+export const ARGUMENT_STATUS_LABELS = {
+  introduced: 'Introduced',
+  answered: 'Answered',
+  partially_answered: 'Partially answered',
+  extended: 'Extended',
+  dropped: 'Dropped',
+  conceded: 'Conceded',
+  turned: 'Turned',
+  still_contested: 'Still contested',
+  unclear: 'Unclear',
+};
+
+export const ARGUMENT_TYPES = [
+  'claim',
+  'evidence',
+  'warrant',
+  'impact',
+  'assumption',
+  'counterargument',
+  'rebuttal',
+  'concession',
+];
+
+export const ARGUMENT_RELATIONS = [
+  'supports',
+  'challenges',
+  'depends_on',
+  'responds_to',
+  'extends',
+  'contradicts',
+  'turns',
+];
+
+export const EVIDENCE_ASSESSMENTS = [
+  'supported',
+  'unsupported_claim',
+  'misrepresented_evidence',
+  'potentially_inaccurate',
+  'correlation_not_causation',
+  'missing_context',
+];
+
+export const EVIDENCE_ASSESSMENT_LABELS = {
+  supported: 'Supports the claim',
+  unsupported_claim: 'Unsupported claim',
+  misrepresented_evidence: 'Misrepresented evidence',
+  potentially_inaccurate: 'Potentially inaccurate',
+  correlation_not_causation: 'Correlation, not causation',
+  missing_context: 'Missing context',
+};

@@ -159,6 +159,15 @@ export function loadConfig(env = process.env, overrides = {}) {
     upload: {
       maxBytes: Math.min(Math.max(int(env.UPLOAD_MAX_BYTES, 5 * 1024 * 1024), 1024), 20 * 1024 * 1024),
     },
+    evidence: {
+      // No provider ships with the app. Without EVIDENCE_SEARCH_URL every
+      // evidence record is reported as unverified instead of pretending a
+      // source was retrieved.
+      provider: String(env.EVIDENCE_PROVIDER || 'http').toLowerCase(),
+      searchUrl: String(env.EVIDENCE_SEARCH_URL || '').trim(),
+      apiKey: String(env.EVIDENCE_API_KEY || '').trim(),
+      timeoutMs: Math.min(Math.max(int(env.EVIDENCE_TIMEOUT_MS, 8000), 1000), 30000),
+    },
     rateLimits: {
       globalWindowMs: int(env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
       globalMax: int(env.RATE_LIMIT_MAX, 600),
