@@ -145,7 +145,7 @@ export function describeFileType(filename) {
  * Extracts speech text from an uploaded file without writing the file to disk.
  * The caller is responsible for enforcing the multipart byte limit.
  */
-export async function extractTextFromFile(file, { maxChars = 20000 } = {}) {
+export async function extractTextFromFile(file, { maxChars = 200000 } = {}) {
   if (!file?.buffer || !file.originalname) {
     throw badRequest('Choose a file to upload.');
   }

@@ -42,7 +42,7 @@ if (shell) {
 
   document.getElementById('modeSlot').innerHTML = meta.ai.mode === 'demo' ? demoBanner(meta) : liveBanner(meta);
 
-  const maxChars = meta.limits?.maxSpeechChars ?? 20000;
+  const maxChars = meta.limits?.maxSpeechChars ?? 200000;
   const maxUploadBytes = meta.limits?.maxUploadBytes ?? 5 * 1024 * 1024;
   const maxUploadLabel = maxUploadBytes >= 1024 * 1024
     ? `${Math.round(maxUploadBytes / (1024 * 1024))} MB`

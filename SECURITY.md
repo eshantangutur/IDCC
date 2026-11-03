@@ -39,7 +39,7 @@ The application stores private competitive-debate material and accepts arbitrary
 - **CSRF**: a 64-character random token lives in the session and is mirrored in a readable `af.csrf` cookie. Every `POST`, `PUT` and `DELETE` under `/api` must send it back in `X-CSRF-Token`. Comparison uses `crypto.timingSafeEqual`. Origin/Referer-derived host checks reject cross-origin state-changing requests.
 - **CORS**: requests with an `Origin` header are allowed only for the request's own host or origins listed in `ALLOWED_ORIGINS`. Credentials are permitted only for those origins.
 - **Rate limiting**: global API limiter, stricter limiter on `register`, `login` and `change-password`, and a per-user limiter on `/api/analyze`. All limits and windows are configurable.
-- **Request size**: JSON bodies capped at 300 kB, form bodies at 20 kB, speech text capped at 20,000 characters server-side. Uploads are limited to one file, 5 MB by default, and 20,000 extracted characters.
+- **Request size**: JSON bodies capped at 2 MB, form bodies at 20 kB, speech text capped at 200,000 characters server-side. Uploads are limited to one file, 5 MB by default, and 200,000 extracted characters.
 - **Input validation**: every route validates types, lengths, enums and identifiers before use; validation errors return field hints without internal detail.
 - **SQL injection**: only prepared statements with bound parameters. No route builds SQL from user input; `LIKE` searches escape `%`, `_` and `\`.
 - **Authorization**: every query for cases, speeches, versions, analyses and statistics is scoped with `user_id = ?`. Requests for another user's record return `404`, not `403`, so record existence is not disclosed.
@@ -163,7 +163,7 @@ user's benchmarks. Any future sharing feature would need its own consent step.
 
 `/api/rounds/:id/analyze` and `/api/evidence/:id/verify` are limited by the AI
 limiter, mounted once per path so a request is counted once. JSON bodies are
-capped at 300 KB, uploads by `UPLOAD_MAX_BYTES`, and round speech text by
+capped at 2 MB, uploads by `UPLOAD_MAX_BYTES`, and round speech text by
 40,000 characters per speech and 30 speeches per round.
 
 ### Retention and deletion

@@ -142,11 +142,11 @@ test('invalid extensions, mismatched signatures and non-UTF-8 text are rejected'
 test('extracted text over the analysis limit is rejected', async () => {
   const response = await alice.postForm(
     '/api/extract',
-    fileForm('x'.repeat(20001), 'too-long.txt', 'text/plain')
+    fileForm('x'.repeat(200001), 'too-long.txt', 'text/plain')
   );
   assert.equal(response.status, 413);
   assert.equal(response.data.error.code, 'file_text_too_long');
-  assert.match(response.data.error.message, /20,000/);
+  assert.match(response.data.error.message, /200,000/);
 });
 
 test('oversized uploads are rejected before extraction', async () => {

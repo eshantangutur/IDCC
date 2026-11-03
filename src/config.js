@@ -154,7 +154,7 @@ export function loadConfig(env = process.env, overrides = {}) {
       jsonMode: bool(env.AI_JSON_MODE, true),
       demoMode,
       demoReason,
-      maxSpeechChars: 20000,
+      maxSpeechChars: 200000,
     },
     upload: {
       maxBytes: Math.min(Math.max(int(env.UPLOAD_MAX_BYTES, 5 * 1024 * 1024), 1024), 20 * 1024 * 1024),

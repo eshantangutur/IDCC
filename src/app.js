@@ -47,7 +47,9 @@ export async function createApp({ config, logger = createLogger({ level: config.
 
   app.use(securityHeaders(config));
   app.use(corsMiddleware(config));
-  app.use(express.json({ limit: '300kb' }));
+  // Room for a 200,000-character speech, which can reach ~800 kB as UTF-8
+  // before JSON escaping. Vercel caps request bodies at 4.5 MB.
+  app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: false, limit: '20kb' }));
   app.use(cookieParser());
   app.use(

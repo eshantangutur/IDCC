@@ -115,7 +115,7 @@ test('oversized bodies and oversized speech text are rejected', async () => {
     title: 'Big',
     format: 'pf',
     resolution: 'Resolved: A test resolution.',
-    notes: 'x'.repeat(320 * 1024),
+    notes: 'x'.repeat(2 * 1024 * 1024 + 4096),
   });
   assert.equal(huge.status, 413);
   assert.equal(huge.data.error.code, 'payload_too_large');
