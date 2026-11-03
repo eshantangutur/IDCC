@@ -73,7 +73,7 @@ export function createMetaRouter({ config }) {
         maxCases: 200,
         maxRounds: 200,
         maxRoundSpeeches: 30,
-        maxRoundSpeechChars: 40000,
+        maxRoundSpeechChars: 128000,
         maxUploadBytes: config.upload.maxBytes,
       },
     });

@@ -60,7 +60,7 @@ export function createBenchmarksRouter({ db }) {
     const format = enumValue(req.body?.format, FORMAT_IDS, 'Format');
     const formatSpec = getFormat(format);
 
-    let speechText = optionalString(req.body?.speechText, 'Speech text', { max: 40000 });
+    let speechText = optionalString(req.body?.speechText, 'Speech text', { max: 128000 });
     let speechType = optionalString(req.body?.speechType, 'Speech type', { max: 120 });
     let resolution = optionalString(req.body?.resolution, 'Resolution', { max: 500 });
     let side = optionalString(req.body?.side, 'Side', { max: 40 });

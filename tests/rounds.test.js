@@ -519,7 +519,7 @@ test('round input is validated', async () => {
   const tooLong = await alice.post(`/api/rounds/${state.roundId}/speeches`, {
     side: 'pro',
     speechType: 'Rebuttal',
-    content: 'x'.repeat(40001),
+    content: 'x'.repeat(128001),
   });
   assert.equal(tooLong.status, 400);
 

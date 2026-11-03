@@ -164,7 +164,7 @@ user's benchmarks. Any future sharing feature would need its own consent step.
 `/api/rounds/:id/analyze` and `/api/evidence/:id/verify` are limited by the AI
 limiter, mounted once per path so a request is counted once. JSON bodies are
 capped at 2 MB, uploads by `UPLOAD_MAX_BYTES`, and round speech text by
-40,000 characters per speech and 30 speeches per round.
+128,000 characters per speech and 30 speeches per round.
 
 ### Retention and deletion
 

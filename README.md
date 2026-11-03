@@ -164,7 +164,7 @@ If `TURSO_DATABASE_URL` is missing on Vercel, the server stops with a clear conf
 - **Round analysis reads recorded speech text only.** Cross-examination is not transcribed, so a status can only be as good as the speeches entered.
 - **Benchmarks are storage and review, not training.** No model is fine-tuned from user data.
 - **Skill trends need history.** A single analysis produces one rating per dimension and no trend.
-- **Large rounds cost more.** Round analysis sends every speech in one request; a 30-speech Policy round is a large prompt and may hit provider limits before the app's own 40,000-character-per-speech cap.
+- **Large rounds cost more.** Round analysis sends every speech in one request; a 30-speech Policy round is a large prompt and may hit provider limits long before the app's own 128,000-character-per-speech cap.
 - **Not independently security-audited.** See `SECURITY.md` for the assumptions and remaining gaps.
 
 ## License

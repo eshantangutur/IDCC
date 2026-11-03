@@ -128,7 +128,7 @@ test('oversized bodies and oversized speech text are rejected', async () => {
   const tooLong = await alice.post(`/api/rounds/${round.data.round.id}/speeches`, {
     side: 'pro',
     speechType: 'Case / Constructive',
-    content: 'a'.repeat(40001),
+    content: 'a'.repeat(128001),
   });
   assert.equal(tooLong.status, 400);
   assert.equal(tooLong.data.error.details.field, 'content');

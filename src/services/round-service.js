@@ -12,7 +12,7 @@ import { textSimilarity } from './ai/round-demo.js';
 
 export const MAX_ROUNDS = 200;
 export const MAX_ROUND_SPEECHES = 30;
-export const MAX_ROUND_SPEECH_CHARS = 40000;
+export const MAX_ROUND_SPEECH_CHARS = 128000;
 
 const APPEARANCE_STATUS = {
   introduced: 'introduced',
